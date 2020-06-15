@@ -10,9 +10,9 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.vmarketing</groupId>
-	<artifactId>admin</artifactId>
+	<artifactId>vmarketing-admin-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>admin</name>
+	<name>vmarketing-admin-api</name>
 	<description>Demo project for Spring Boot</description>
 
 	<repositories>
@@ -48,6 +48,7 @@
 			<artifactId>spring-boot-starter-log4j2</artifactId>
 		</dependency>
 
+		<!-- Web应用快速开发 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
