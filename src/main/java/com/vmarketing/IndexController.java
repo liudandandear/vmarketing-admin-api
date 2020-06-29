@@ -1,4 +1,4 @@
-package com.vmarketing.admin;
+package com.vmarketing;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
