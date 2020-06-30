@@ -1,7 +1,8 @@
-package com.vmarketing.util;
+package com.vmarketing.core.util;
 
-import com.vmarketing.shiro.AccountProfile;
 import org.apache.shiro.SecurityUtils;
+
+import com.vmarketing.core.shiro.AccountProfile;
 
 public class ShiroUtil {
 

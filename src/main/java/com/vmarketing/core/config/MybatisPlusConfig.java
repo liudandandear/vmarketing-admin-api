@@ -1,4 +1,4 @@
-package com.vmarketing.config;
+package com.vmarketing.core.config;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;

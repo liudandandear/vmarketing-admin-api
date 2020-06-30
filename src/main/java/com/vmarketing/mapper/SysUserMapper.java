@@ -1,6 +1,6 @@
 package com.vmarketing.mapper;
 
-import com.vmarketing.entity.User;
+import com.vmarketing.entity.SysUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -9,8 +9,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * </p>
  *
  * @author liudandandear
- * @since 2020-06-29
+ * @since 2020-06-30
  */
-public interface UserMapper extends BaseMapper<User> {
+public interface SysUserMapper extends BaseMapper<SysUser> {
 
 }

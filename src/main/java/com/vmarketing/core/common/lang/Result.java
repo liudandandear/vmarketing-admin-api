@@ -1,9 +1,10 @@
-package com.vmarketing.common.lang;
+package com.vmarketing.core.common.lang;
 
 import lombok.Data;
 
 import java.io.Serializable;
 
+// 统一返回的结果封装
 @Data
 public class Result implements Serializable {
 

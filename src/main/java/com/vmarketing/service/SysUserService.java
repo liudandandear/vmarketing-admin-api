@@ -1,6 +1,6 @@
 package com.vmarketing.service;
 
-import com.vmarketing.entity.User;
+import com.vmarketing.entity.SysUser;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -9,8 +9,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * </p>
  *
  * @author liudandandear
- * @since 2020-06-29
+ * @since 2020-06-30
  */
-public interface UserService extends IService<User> {
+public interface SysUserService extends IService<SysUser> {
 
 }
