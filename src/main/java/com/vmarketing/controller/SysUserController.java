@@ -1,5 +1,6 @@
 package com.vmarketing.controller;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,19 +29,28 @@ public class SysUserController {
 	@Autowired
 	SysUserService sysUserService;
 
+	// 测试权限验证
+	@RequiresAuthentication
+	@GetMapping("test")
+	public Result test() {
+		SysUser sysUser = sysUserService.getById(1L);
+		return Result.succ(sysUser);
+	}
+
 	@GetMapping("/{id}")
 	public Object test(@PathVariable("id") Long id) {
 		SysUser sysUser = sysUserService.getById(id);
 		return Result.succ(sysUser);
 	}
-	
+
 	/**
 	 * 测试实体校验
+	 * 
 	 * @param user
 	 * @return
 	 */
 	@PostMapping("/save")
 	public Object testUser(@Validated @RequestBody SysUser sysUser) {
-	    return sysUser.toString();
+		return sysUser.toString();
 	}
 }

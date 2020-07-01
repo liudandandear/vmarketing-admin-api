@@ -13,7 +13,7 @@ import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 @MapperScan("com.vmarketing.mapper")
 public class MybatisPlusConfig {
 	@Bean
-	public PaginationInterceptor paginationInterceptor() {
+	public PaginationInterceptor paginationInterceptor() {// 分页
 		PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
 		return paginationInterceptor;
 	}

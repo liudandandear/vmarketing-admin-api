@@ -62,6 +62,9 @@ public class JwtFilter extends AuthenticatingFilter {
 		}
 	}
 
+	/**
+	 * 异常格式统一处理，返给前端
+	 */
 	@Override
 	protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException e, ServletRequest request,
 			ServletResponse response) {

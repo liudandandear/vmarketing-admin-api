@@ -24,7 +24,7 @@ import cn.hutool.core.map.MapUtil;
 import cn.hutool.crypto.SecureUtil;
 
 /**
- * 账户相关
+ * 账号相关
  * 
  * @author liudandandear
  *
@@ -36,6 +36,12 @@ public class AccountController {
 	@Autowired
 	SysUserService sysUserService;
 
+	/**
+	 * 登录
+	 * @param loginDto
+	 * @param response
+	 * @return
+	 */
 	@CrossOrigin
 	@PostMapping("/login")
 	public Result login(@Validated @RequestBody LoginDto loginDto, HttpServletResponse response) {
@@ -55,8 +61,11 @@ public class AccountController {
                 .map();
 		return Result.succ(object);
 	}
-
-	// 退出
+	
+	/**
+	 * 退出
+	 * @return
+	 */
 	@GetMapping("/logout")
 	@RequiresAuthentication
 	public Result logout() {
