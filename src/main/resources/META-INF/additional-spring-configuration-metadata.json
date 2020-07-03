@@ -8,5 +8,15 @@
     "name": "jwt.secret",
     "type": "java.lang.String",
     "description": "A description for 'jwt.secret'"
+  },
+  {
+    "name": "encryptAESKey",
+    "type": "java.lang.String",
+    "description": "A description for 'encryptAESKey'"
+  },
+  {
+    "name": "encryptAESKey",
+    "type": "java.lang.String",
+    "description": "A description for 'encryptAESKey'"
   }
 ]}

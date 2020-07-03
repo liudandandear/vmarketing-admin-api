@@ -6,8 +6,8 @@ import com.vmarketing.core.shiro.AccountProfile;
 
 public class ShiroUtil {
 
-    public static AccountProfile getProfile() {
-        return (AccountProfile) SecurityUtils.getSubject().getPrincipal();
-    }
+	public static AccountProfile getProfile() {
+		return (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+	}
 
 }

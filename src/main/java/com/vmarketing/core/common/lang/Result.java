@@ -1,26 +1,113 @@
 package com.vmarketing.core.common.lang;
 
-import lombok.Data;
+import com.alibaba.fastjson.JSONObject;
+import com.vmarketing.core.shiro.constant.ResultCode;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 
-// 统一返回的结果封装
-@Data
+/**
+ * Json封装
+ */
 public class Result implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 8178937610421199532L;
 
-	private int code; // 200是正常，非200表示异常
+	/**
+	 * 请求标识，默认为失败状态
+	 */
+	private boolean success = false;
 
-	public int getCode() {
-		return code;
+	/**
+	 * 状态码，默认为失败状态
+	 */
+	private Integer code = ResultCode.ERROR;
+
+	/***
+	 * 操作信息
+	 */
+	private String msg;
+
+	/**
+	 * 返回数据
+	 */
+	private Object obj = new JSONObject();
+
+	/**
+	 * 成功响应
+	 */
+	public Result OK() {
+		this.success = true;
+		this.code = ResultCode.SUCCESS;
+		if (StringUtils.isBlank(this.msg)) {
+			this.msg = "success.";
+		}
+		return this;
 	}
 
-	public void setCode(int code) {
+	/**
+	 * 请求成功，但业务逻辑处理不通过
+	 */
+	public Result NO() {
+		this.success = true;
+		this.code = ResultCode.ERROR;
+		return this;
+	}
+
+	public Result() {
+		super();
+	}
+
+	public Result(int code) {
+		super();
+		this.success = true;
 		this.code = code;
 	}
 
-	private String msg;
+	public Result(int code, String msg) {
+		super();
+		this.success = true;
+		this.code = code;
+		this.msg = msg;
+	}
+
+	public Result(int code, String msg, Object obj) {
+		super();
+		this.success = true;
+		this.code = code;
+		this.msg = msg;
+		this.obj = obj;
+	}
+
+	public boolean isSuccess() {
+		return success;
+	}
+
+	public void setSuccess(boolean success) {
+		this.success = success;
+	}
+
+	public Integer getCode() {
+		return code;
+	}
+
+	public void setCode(Integer code) {
+		this.success = true;
+		this.code = code;
+	}
+
+	public Object getObj() {
+		return obj;
+	}
+
+	public void setObj(Object obj) {
+		this.success = true;
+		if (obj == null) {
+			obj = new JSONObject();
+		}
+		this.obj = obj;
+	}
 
 	public String getMsg() {
 		return msg;
@@ -30,42 +117,8 @@ public class Result implements Serializable {
 		this.msg = msg;
 	}
 
-	private Object data;
-
-	public Object getData() {
-		return data;
+	@Override
+	public String toString() {
+		return "ResultVo{" + "success=" + success + ", code=" + code + ", msg='" + msg + '\'' + ", obj=" + obj + '}';
 	}
-
-	public void setData(Object data) {
-		this.data = data;
-	}
-
-	public static Result succ(Object data) {
-		return succ(200, "操作成功", data);
-	}
-
-	public static Result succ(int code, String msg, Object data) {
-		Result r = new Result();
-		r.setCode(code);
-		r.setMsg(msg);
-		r.setData(data);
-		return r;
-	}
-
-	public static Result fail(String msg) {
-		return fail(400, msg, null);
-	}
-
-	public static Result fail(String msg, Object data) {
-		return fail(400, msg, data);
-	}
-
-	public static Result fail(int code, String msg, Object data) {
-		Result r = new Result();
-		r.setCode(code);
-		r.setMsg(msg);
-		r.setData(data);
-		return r;
-	}
-
 }
