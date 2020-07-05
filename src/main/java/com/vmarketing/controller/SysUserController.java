@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.vmarketing.core.common.lang.Result;
+import com.vmarketing.core.api.Result;
 import com.vmarketing.entity.SysUser;
 import com.vmarketing.service.SysUserService;
 

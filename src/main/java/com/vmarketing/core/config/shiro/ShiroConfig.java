@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.servlet.Filter;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;

@@ -1,4 +1,4 @@
-package com.vmarketing.core.shiro.constant;
+package com.vmarketing.core.constant;
 
 /**
  * redis 常量配置

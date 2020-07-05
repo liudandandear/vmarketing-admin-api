@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.vmarketing.core.common.db.RedisClient;
-import com.vmarketing.core.common.dto.LoginDto;
-import com.vmarketing.core.common.lang.Result;
-import com.vmarketing.core.shiro.constant.JwtConstant;
-import com.vmarketing.core.shiro.constant.RedisConstant;
+import com.vmarketing.core.api.Result;
+import com.vmarketing.core.constant.JwtConstant;
+import com.vmarketing.core.constant.RedisConstant;
+import com.vmarketing.core.db.RedisClient;
 import com.vmarketing.core.shiro.constant.StatusCode;
 import com.vmarketing.core.util.JwtUtil;
 import com.vmarketing.core.util.Md5Util;
+import com.vmarketing.dto.account.LoginReq;
 import com.vmarketing.entity.SysUser;
 import com.vmarketing.service.SysUserService;
 
@@ -39,9 +39,12 @@ import cn.hutool.crypto.SecureUtil;
  */
 @RestController
 public class AccountController {
-	
+
 	@Value("${config.refreshToken-expireTime}")
 	private String refreshTokenExpireTime;
+
+	@Autowired
+	SysUser sysUser;
 
 	@Autowired
 	SysUserService sysUserService;
@@ -55,15 +58,17 @@ public class AccountController {
 	 */
 	@CrossOrigin
 	@PostMapping("/login")
-	public Result login(@Validated @RequestBody LoginDto loginDto, HttpServletResponse response) {
+	public Result login(@Validated @RequestBody LoginReq loginDto, HttpServletResponse response)
+	{
 		Result result = new Result();
 		RedisClient redis = new RedisClient();
-		SysUser sysUser = sysUserService.getOne(new QueryWrapper<SysUser>().eq("username", loginDto.getPhone()));
+		sysUserService.getOne(new QueryWrapper<SysUser>().eq("username", loginDto.getPhone()));
 		Assert.notNull(sysUser, "请输入正确的用户名或密码！");// 如果用户不存在
 		// Md5加密
 		String inputPassword = Md5Util.encode(loginDto.getPassword() + sysUser.getSalt());// 用户密码=输入的密码+密码盐
 		// 将数据库里边的密码和输入的密码（inputPassword）进行比较
-		if (!sysUser.getPassword().equals(inputPassword)) {
+		if (!sysUser.getPassword().equals(inputPassword))
+		{
 			result.setCode(StatusCode.NOT_FOUND);
 			result.setMsg("用户名与密码不匹配！");
 			return result;
@@ -89,19 +94,25 @@ public class AccountController {
 	/**
 	 * 获取当前登录用户
 	 */
-	public SysUser getCurrent() {
-		try {
+	public SysUser getCurrent()
+	{
+		try
+		{
 			Subject subject = SecurityUtils.getSubject();
-			if (subject != null) {
+			if (subject != null)
+			{
 				String token = (String) subject.getPrincipal();
-				if (StringUtils.isNotBlank(token)) {
+				if (StringUtils.isNotBlank(token))
+				{
 					String account = JwtUtil.getClaim(token, JwtConstant.ACCOUNT);
-					if (StringUtils.isNotBlank(account)) {
+					if (StringUtils.isNotBlank(account))
+					{
 						return sysUserService.getOne(queryWrapper);
 					}
 				}
 			}
-		} catch (Exception e) {
+		} catch (Exception e)
+		{
 			e.printStackTrace();
 		}
 		return null;
@@ -114,7 +125,8 @@ public class AccountController {
 	 */
 	@GetMapping("/logout")
 	@RequiresAuthentication
-	public Result logout() {
+	public Result logout()
+	{
 		Result result = new Result();
 		SecurityUtils.getSubject().logout();
 		result.OK();

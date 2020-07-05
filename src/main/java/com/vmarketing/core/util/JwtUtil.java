@@ -13,8 +13,8 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.vmarketing.core.common.exception.CustomException;
-import com.vmarketing.core.shiro.constant.JwtConstant;
+import com.vmarketing.core.constant.JwtConstant;
+import com.vmarketing.core.exception.CustomException;
 
 /**
  * JAVA-JWT工具类

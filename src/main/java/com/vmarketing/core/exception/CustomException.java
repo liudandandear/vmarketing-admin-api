@@ -1,4 +1,4 @@
-package com.vmarketing.core.common.exception;
+package com.vmarketing.core.exception;
 
 /**
  * 自定义异常(CustomException)

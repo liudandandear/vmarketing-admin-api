@@ -1,12 +1,18 @@
-package com.vmarketing.core.common.dto;
+package com.vmarketing.dto.account;
 
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
+/**
+ * 登录请求接口参数校验
+ * 
+ * @author liudandan
+ *
+ */
 @Data
-public class LoginDto implements Serializable {
+public class LoginReq implements Serializable {
 
 	/**
 	 * serialVersionUID 用来表明类的不同版本间的兼容性

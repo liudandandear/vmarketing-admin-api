@@ -1,6 +1,6 @@
 package com.vmarketing.service.impl;
 
-import com.vmarketing.core.common.lang.Result;
+import com.vmarketing.core.api.Result;
 import com.vmarketing.core.constant.CacheConstant;
 import com.vmarketing.core.constant.CommonConstant;
 import com.vmarketing.core.util.PasswordUtil;

@@ -1,7 +1,7 @@
-package com.vmarketing.core.shiro.constant;
+package com.vmarketing.core.constant;
 
 /**
- * JWT常量配置
+ * JWT 常量配置
  *
  */
 public interface JwtConstant {

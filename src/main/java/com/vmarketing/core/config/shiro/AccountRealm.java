@@ -1,9 +1,9 @@
 package com.vmarketing.core.config.shiro;
 
-import com.vmarketing.core.common.db.RedisClient;
 import com.vmarketing.core.config.jwt.JwtToken;
-import com.vmarketing.core.shiro.constant.JwtConstant;
-import com.vmarketing.core.shiro.constant.RedisConstant;
+import com.vmarketing.core.constant.JwtConstant;
+import com.vmarketing.core.constant.RedisConstant;
+import com.vmarketing.core.db.RedisClient;
 import com.vmarketing.core.util.JwtUtil;
 import com.vmarketing.entity.SysUser;
 import com.vmarketing.mapper.SysUserMapper;

@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.vmarketing.core.common.db.RedisClient;
-import com.vmarketing.core.common.exception.CustomException;
-import com.vmarketing.core.common.lang.Result;
-import com.vmarketing.core.shiro.constant.JwtConstant;
-import com.vmarketing.core.shiro.constant.RedisConstant;
-import com.vmarketing.core.shiro.constant.ResultCode;
+import com.vmarketing.core.api.Result;
+import com.vmarketing.core.constant.JwtConstant;
+import com.vmarketing.core.constant.RedisConstant;
+import com.vmarketing.core.constant.ResultCode;
+import com.vmarketing.core.db.RedisClient;
+import com.vmarketing.core.exception.CustomException;
 import com.vmarketing.core.util.JsonConvertUtil;
 import com.vmarketing.core.util.JwtUtil;
 

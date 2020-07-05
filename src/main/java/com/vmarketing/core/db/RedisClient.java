@@ -1,4 +1,4 @@
-package com.vmarketing.core.common.db;
+package com.vmarketing.core.db;
 
 import java.util.List;
 import java.util.Map;

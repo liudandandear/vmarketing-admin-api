@@ -1,7 +1,7 @@
-package com.vmarketing.core.common.lang;
+package com.vmarketing.core.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.vmarketing.core.shiro.constant.ResultCode;
+import com.vmarketing.core.constant.ResultCode;
 
 import org.apache.commons.lang3.StringUtils;
 

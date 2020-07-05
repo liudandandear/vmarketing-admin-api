@@ -1,4 +1,4 @@
-package com.vmarketing.core.config;
+package com.vmarketing.core.exception;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,10 +19,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import com.vmarketing.core.common.exception.CustomException;
-import com.vmarketing.core.common.lang.Result;
-import com.vmarketing.core.shiro.constant.ResultCode;
-import com.vmarketing.core.shiro.constant.StatusCode;
+import com.vmarketing.core.api.Result;
+import com.vmarketing.core.constant.ResultCode;
 
 /**
  * 异常控制处理器
@@ -48,7 +46,7 @@ public class ExceptionAdvice {
 	@ExceptionHandler(UnauthorizedException.class)
 	public Result handle401(UnauthorizedException e) {
 		Result result = new Result();
-		result.setCode(StatusCode.UNLAWFUL);
+		result.setCode(ResultCode.UNLAWFUL);
 		result.setMsg("无权访问(Unauthorized):当前Subject没有此请求所需权限(" + e.getMessage() + ")");
 		return result;
 	}
@@ -61,7 +59,7 @@ public class ExceptionAdvice {
 	@ExceptionHandler(UnauthenticatedException.class)
 	public Result handle401(UnauthenticatedException e) {
 		Result result = new Result();
-		result.setCode(StatusCode.UNLAWFUL);
+		result.setCode(ResultCode.UNLAWFUL);
 		result.setMsg("无权访问(Unauthorized):当前Subject是匿名Subject，请先登录(This subject is anonymous.)");
 		return result;
 	}
@@ -75,7 +73,7 @@ public class ExceptionAdvice {
 		Result result = new Result();
 		List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
 		Map<String, Object> results = this.getValidError(fieldErrors);
-		result.setCode(StatusCode.ERROR);
+		result.setCode(ResultCode.ERROR);
 		result.setMsg(results.get("errorMsg").toString());
 		result.setObj(results.get("errorList"));
 		return result;
@@ -90,7 +88,7 @@ public class ExceptionAdvice {
 		Result result = new Result();
 		List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
 		Map<String, Object> results = this.getValidError(fieldErrors);
-		result.setCode(StatusCode.ERROR);
+		result.setCode(ResultCode.ERROR);
 		result.setMsg(results.get("errorMsg").toString());
 		result.setObj(results.get("errorList"));
 		return result;
@@ -103,7 +101,7 @@ public class ExceptionAdvice {
 	@ExceptionHandler(NoHandlerFoundException.class)
 	public Result handle(NoHandlerFoundException e) {
 		Result result = new Result();
-		result.setCode(StatusCode.NOT_FOUND);
+		result.setCode(ResultCode.NOT_FOUND);
 		result.setMsg(e.getMessage());
 		return result;
 	}
@@ -117,7 +115,7 @@ public class ExceptionAdvice {
 		// return new JsonVo(this.getStatus(request).value(), ex.toString() + ": " +
 		// ex.getMessage(), null);
 		Result result = new Result();
-		result.setCode(StatusCode.SERVER_ERROR);
+		result.setCode(ResultCode.SERVER_ERROR);
 		result.setMsg(ex.toString() + ": " + ex.getMessage());
 		return result;
 	}
@@ -132,17 +130,6 @@ public class ExceptionAdvice {
 		result.NO();
 		result.setMsg(e.getMessage());
 		return result;
-	}
-
-	/**
-	 * 获取状态码
-	 */
-	private HttpStatus getStatus(HttpServletRequest request) {
-		Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
-		if (statusCode == null) {
-			return HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return HttpStatus.valueOf(statusCode);
 	}
 
 	/**

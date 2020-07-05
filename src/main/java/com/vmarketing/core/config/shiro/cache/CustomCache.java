@@ -8,9 +8,9 @@ import org.apache.shiro.cache.CacheException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.vmarketing.core.common.db.RedisClient;
-import com.vmarketing.core.shiro.constant.JwtConstant;
-import com.vmarketing.core.shiro.constant.RedisConstant;
+import com.vmarketing.core.constant.JwtConstant;
+import com.vmarketing.core.constant.RedisConstant;
+import com.vmarketing.core.db.RedisClient;
 import com.vmarketing.core.util.JwtUtil;
 
 /**
@@ -41,6 +41,7 @@ public class CustomCache<K, V> implements Cache<K, V> {
 	/**
 	 * 获取缓存
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object get(Object key) throws CacheException {
 		if (!redis.hasKey(this.getKey(key))) {
@@ -52,6 +53,7 @@ public class CustomCache<K, V> implements Cache<K, V> {
 	/**
 	 * 保存缓存
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object put(Object key, Object value) throws CacheException {
 		// 读取配置文件，获取Redis的Shiro缓存过期时间
@@ -65,6 +67,7 @@ public class CustomCache<K, V> implements Cache<K, V> {
 	/**
 	 * 移除缓存
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object remove(Object key) throws CacheException {
 		if (!redis.hasKey(this.getKey(key))) {

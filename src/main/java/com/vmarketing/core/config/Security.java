@@ -1,7 +1,7 @@
-package com.vmarketing.core.shiro.constant;
+package com.vmarketing.core.config;
 
 /**
- * Security配置
+ * Security 配置
  * 
  */
 public interface Security {
