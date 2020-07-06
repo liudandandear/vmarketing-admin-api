@@ -132,7 +132,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 		// 拿到当前Header中Authorization的AccessToken(Shiro中getAuthzHeader方法已经实现)
 		String token = this.getAuthzHeader(request);
 		// 获取当前Token的帐号信息
-		String account = JwtUtil.getClaim(token, JwtConstant.ACCOUNT);
+		String account = JwtUtil.getClaim(token, JwtConstant.ACCOUNT_KEY);
 		// 判断Redis中RefreshToken是否存在
 		if (redis.hasKey(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + account)) {
 			// Redis中RefreshToken还存在，获取RefreshToken的时间戳

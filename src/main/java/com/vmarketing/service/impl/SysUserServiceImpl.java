@@ -44,7 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @since 2020-06-30
  */
 @Service
-public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
+public abstract class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
 	@Autowired
 	private Result result;
@@ -52,19 +52,13 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	@Autowired
 	private SysUserService sysUserService;
 
-	@Autowired
-	private SysPermissionService sysPermissionService;
-
-	@Autowired
-	private SysUserRoleService sysUserRoleService;
-
 	/**
 	 * 重置密码
 	 */
 	@Override
 	@CacheEvict(value = { CacheConstant.SYS_USERS_CACHE }, allEntries = true)
 	public Result resetPassword(String username, String oldpassword, String newpassword, String confirmpassword) {
-		SysUser userinfo = SysUserService.getUserByName(username);
+		SysUser userinfo = this.getOne(new QueryWrapper<SysUser>().eq("username", username));
 		String passwordEncode = PasswordUtil.encrypt(username, oldpassword, userinfo.getSalt());
 		if (!userinfo.getPassword().equals(passwordEncode)) {
 			result.setMsg("旧密码输入错误!");
@@ -124,90 +118,13 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	/**
-	 * 添加用户和用户角色关系
-	 */
-	@Override
-	@Transactional
-	public void addUserWithRole(SysUser user, String roles) {
-		this.save(user);
-		if (oConvertUtils.isNotEmpty(roles)) {
-			String[] arr = roles.split(",");
-			for (String roleId : arr) {
-				SysUserRole userRole = new SysUserRole(user.getId(), roleId);
-				sysUserRoleService.saveOrUpdate(userRole);
-			}
-		}
-
-	}
-
-	/**
-	 * 修改用户和用户角色关系
-	 */
-	@Override
-	@CacheEvict(value = { CacheConstant.SYS_USERS_CACHE }, allEntries = true)
-	@Transactional
-	public void editUserWithRole(SysUser user, String roles) {
-		this.updateById(user);
-		// 先删后加
-		sysUserRoleService.remove(new QueryWrapper<SysUserRole>().lambda().eq(SysUserRole::getUserId, user.getId()));
-		if (oConvertUtils.isNotEmpty(roles)) {
-			String[] arr = roles.split(",");
-			for (String roleId : arr) {
-				SysUserRole userRole = new SysUserRole(user.getId(), roleId);
-				sysUserRoleService.saveOrUpdate(userRole);
-			}
-		}
-	}
-
-	/**
-	 * 获取用户的授权角色 TODO::待完善
-	 */
-//	@Override
-//	public List<String> getRole(String username) {
-//		return sysUserRoleService.getRoleByUserName(username);
-//	}
-
-	/**
-	 * 获取用户信息 TODO::待完善
+	 * 获取用户信息
 	 */
 	@Override
 	public SysUserCacheInfo getCacheUser(String username) {
 		SysUserCacheInfo info = new SysUserCacheInfo();
 		return info;
 
-	}
-
-	/**
-	 * 根据角色Id查询
-	 */
-	@Override
-	public IPage<SysUser> getUserByRoleId(Page<SysUser> page, String roleId, String username) {
-		return sysUserService.getUserByRoleId(page, roleId, username);
-	}
-
-	@Override
-	public Set<String> getUserRolesSet(String username) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * 通过用户名获取用户权限集合 TODO::待完善
-	 */
-	@Override
-	public Set<String> getUserPermissionsSet(String username) {
-		Set<String> permissionSet = new HashSet<>();
-		List<SysPermission> permissionList = sysPermissionService.queryByUser(username);
-		for (SysPermission po : permissionList) {
-//			// TODO URL规则有问题？
-//			if (oConvertUtils.isNotEmpty(po.getUrl())) {
-//				permissionSet.add(po.getUrl());
-//			}
-			if (oConvertUtils.isNotEmpty(po.getPerms())) {
-				permissionSet.add(po.getPerms());
-			}
-		}
-		return permissionSet;
 	}
 
 	/**
@@ -227,6 +144,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	/**
+	 * 根据用户名获取用户信息
+	 */
+	@Override
+	public SysUser getUserByName(SysUser sysUser, String username) {
+		return sysUserService.getUserByEmail(username);
+	}
+
+	/**
 	 * 校验用户是否有效
 	 */
 	@Override
@@ -242,71 +167,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 			return result;
 		}
 		return result;
-	}
-
-	/**
-	 * 查询被逻辑删除的用户
-	 */
-	@Override
-	public List<SysUser> queryLogicDeleted() {
-		return this.queryLogicDeleted(null);
-	}
-
-	/**
-	 * 查询被逻辑删除的用户（可拼装查询条件）
-	 */
-	@Override
-	public List<SysUser> queryLogicDeleted(LambdaQueryWrapper<SysUser> wrapper) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * 还原被逻辑删除的用户
-	 */
-	@Override
-	public boolean revertLogicDeleted(List<String> userIds, SysUser updateEntity) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * 彻底删除被逻辑删除的用户
-	 */
-	@Override
-	public boolean removeLogicDeleted(List<String> userIds) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * 更新手机号、邮箱空字符串为 null
-	 */
-	@Override
-	@Transactional(rollbackFor = Exception.class)
-	public boolean updateNullPhoneEmail() {
-		sysUserService.updateNullByEmptyString("email");
-		sysUserService.updateNullByEmptyString("phone");
-		return true;
-	}
-
-	/**
-	 * 保存第三方用户信息
-	 */
-	@Override
-	public void saveThirdUser(SysUser sysUser) {
-		// 保存用户
-		String userid;
-		baseMapper.insert(sysUser);
-		// 获取第三方角色
-		SysRole sysRole = sysRoleMapper
-				.selectOne(new LambdaQueryWrapper<SysRole>().eq(SysRole::getRoleCode, "third_role"));
-		// 保存用户角色
-		SysUserRole userRole = new SysUserRole();
-		userRole.setRoleId(sysRole.getId());
-		userRole.setUserId(userid);
-		sysUserRoleMapper.insert(userRole);
-
 	}
 
 }

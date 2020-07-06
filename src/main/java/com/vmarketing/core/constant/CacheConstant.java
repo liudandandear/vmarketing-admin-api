@@ -1,7 +1,7 @@
 package com.vmarketing.core.constant;
 
 /**
- * @description: 缓存常量
+ * 缓存常量
  */
 public interface CacheConstant {
 

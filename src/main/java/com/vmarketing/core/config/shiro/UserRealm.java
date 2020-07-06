@@ -1,13 +1,5 @@
 package com.vmarketing.core.config.shiro;
 
-import com.vmarketing.core.config.jwt.JwtToken;
-import com.vmarketing.core.constant.JwtConstant;
-import com.vmarketing.core.constant.RedisConstant;
-import com.vmarketing.core.db.RedisClient;
-import com.vmarketing.core.util.JwtUtil;
-import com.vmarketing.entity.SysUser;
-import com.vmarketing.mapper.SysUserMapper;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -20,17 +12,26 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.vmarketing.core.config.jwt.JwtToken;
+import com.vmarketing.core.constant.JwtConstant;
+import com.vmarketing.core.constant.RedisConstant;
+import com.vmarketing.core.db.RedisClient;
+import com.vmarketing.core.util.JwtUtil;
+import com.vmarketing.entity.SysUser;
+import com.vmarketing.service.impl.SysUserServiceImpl;
+
 /**
  * 自定义Realm
  */
 @Service
-public class AccountRealm extends AuthorizingRealm {
+public class UserRealm extends AuthorizingRealm {
 
 	@Autowired
 	private RedisClient redis;
 
 	@Autowired
-	private SysUserMapper sysUserMapper;
+	private SysUserServiceImpl sysUserService;
 
 	/**
 	 * 大坑，必须重写此方法，不然Shiro会报错
@@ -46,24 +47,17 @@ public class AccountRealm extends AuthorizingRealm {
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 		SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
-        /*
-        // 返回当前用户所拥有的角色、权限等信息，根据自身项目编码即可
-        String account = JwtUtil.getClaim(principals.toString(), JwtConstant.ACCOUNT);
-        // 查询用户角色
-        List<Role> roles = roleMapper.findByAccount(account);
-        for (int i = 0, roleLen = roles.size(); i < roleLen; i++) {
-            Role role = roles.get(i);
-            // 添加角色
-            simpleAuthorizationInfo.addRole(role.getName());
-            // 根据用户角色查询权限
-            List<Permission> permissions = permissionMapper.findByRoleId(role.getId());
-            for (int j = 0, perLen = permissions.size(); j < perLen; j++) {
-                Permission permission = permissions.get(j);
-                // 添加权限
-                simpleAuthorizationInfo.addStringPermission(permission.getSn());
-            }
-        }
-        */
+		/*
+		 * // 返回当前用户所拥有的角色、权限等信息，根据自身项目编码即可 String account =
+		 * JwtUtil.getClaim(principals.toString(), JwtConstant.ACCOUNT); // 查询用户角色
+		 * List<Role> roles = roleMapper.findByAccount(account); for (int i = 0, roleLen
+		 * = roles.size(); i < roleLen; i++) { Role role = roles.get(i); // 添加角色
+		 * simpleAuthorizationInfo.addRole(role.getName()); // 根据用户角色查询权限
+		 * List<Permission> permissions = permissionMapper.findByRoleId(role.getId());
+		 * for (int j = 0, perLen = permissions.size(); j < perLen; j++) { Permission
+		 * permission = permissions.get(j); // 添加权限
+		 * simpleAuthorizationInfo.addStringPermission(permission.getSn()); } }
+		 */
 		return simpleAuthorizationInfo;
 	}
 
@@ -84,7 +78,7 @@ public class AccountRealm extends AuthorizingRealm {
 			throw new AuthenticationException("token中帐号为空(The account in Token is empty.)");
 		}
 		// 查询用户是否存在
-		SysUser sysUser = sysUserMapper.findByAccount(account);
+		SysUser sysUser = sysUserService.getOne(new QueryWrapper<SysUser>().eq("phone", account));
 		if (sysUser == null) {
 			throw new AuthenticationException("该帐号不存在(The account does not exist.)");
 		}

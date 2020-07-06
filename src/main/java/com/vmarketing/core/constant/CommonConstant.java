@@ -1,5 +1,10 @@
 package com.vmarketing.core.constant;
 
+/**
+ * 
+ * @author liudandan
+ *
+ */
 public interface CommonConstant {
 
 	/**

@@ -1,6 +1,9 @@
 package com.vmarketing.service;
 
 import com.vmarketing.entity.SysPermission;
+
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -12,5 +15,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2020-07-03
  */
 public interface SysPermissionService extends IService<SysPermission> {
+
+	List<SysPermission> queryByUser(String username);
 
 }

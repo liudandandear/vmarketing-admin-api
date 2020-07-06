@@ -7,9 +7,9 @@ package com.vmarketing.core.constant;
 public interface JwtConstant {
 
 	/**
-	 * JWT-account:
+	 * JWT-ACCOUNT_KEY:
 	 */
-	String ACCOUNT = "phone";
+	String ACCOUNT_KEY = "phone";
 
 	/**
 	 * JWT-currentTimeMillis:

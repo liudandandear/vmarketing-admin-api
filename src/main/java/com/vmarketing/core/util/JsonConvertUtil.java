@@ -8,6 +8,8 @@ import com.alibaba.fastjson.JSONObject;
 
 /**
  * Json和Object及List的互相转换
+ * 
+ * @author liudandan
  */
 public class JsonConvertUtil {
 	/**

@@ -4,6 +4,9 @@ import com.vmarketing.entity.SysPermission;
 import com.vmarketing.mapper.SysPermissionMapper;
 import com.vmarketing.service.SysPermissionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,5 +19,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, SysPermission> implements SysPermissionService {
+
+	@Override
+	public List<SysPermission> queryByUser(String username) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

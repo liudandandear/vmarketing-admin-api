@@ -113,22 +113,4 @@ public class SysUserController {
 		sysUserService.saveOrUpdate(tmp);
 		return result.OK();
 	}
-
-	/**
-	 * 新增用户
-	 * 
-	 * @param sysUser
-	 * @return
-	 */
-	@PostMapping
-	public Result add(@Validated @RequestBody SysUser sysUser) {
-		SysUser tmp = null;
-		tmp = new SysUser();
-		tmp.setName(sysUser.getName());
-		tmp.setEnable(0);
-		tmp.setStatus(0);
-		tmp.setCreated(LocalDateTime.now());
-		sysUserService.saveOrUpdate(tmp);
-		return Result.succ(null);
-	}
 }

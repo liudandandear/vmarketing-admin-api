@@ -1,7 +1,7 @@
 package com.vmarketing.core.constant;
 
 /**
- * 状态码常量
+ * RESTFULL 状态码常量
  * 
  */
 public interface ResultCode {
@@ -55,11 +55,11 @@ public interface ResultCode {
 	 * 天级流控
 	 */
 	int DAY_LIMIT = 10435;
-	
+
 	/**
 	 * 服务错误
 	 */
-	int SERVER_ERROR=10500;
+	int SERVER_ERROR = 10500;
 
 	/**
 	 * 参数错误

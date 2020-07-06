@@ -35,12 +35,4 @@ public class SysUserRole implements Serializable {
 	 */
 	private String roleId;
 
-	public SysUserRole() {
-	}
-
-	public SysUserRole(Integer userId, String roleId) {
-		this.userId = userId;
-		this.roleId = roleId;
-	}
-
 }

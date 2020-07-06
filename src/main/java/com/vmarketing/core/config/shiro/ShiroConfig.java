@@ -1,10 +1,5 @@
 package com.vmarketing.core.config.shiro;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.Filter;
-
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
@@ -15,10 +10,18 @@ import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreato
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.data.redis.core.RedisTemplate;
 
-import com.vmarketing.core.config.jwt.JwtFilter;
-import com.vmarketing.core.config.shiro.cache.CustomCacheManager;
+import javax.servlet.Filter;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * Shiro配置 转载请注明出处，更多技术文章欢迎大家访问我的个人博客站点：https://www.doufuplus.com
+ *
+ * @author 丶doufu
+ * @date 2019/08/03
+ */
 @Configuration
 public class ShiroConfig {
 
@@ -27,10 +30,10 @@ public class ShiroConfig {
 	 * http://shiro.apache.org/session-management.html#SessionManagement-StatelessApplications%28Sessionless%29
 	 */
 	@Bean("securityManager")
-	public DefaultWebSecurityManager getManager(AccountRealm accountRealm) {
+	public DefaultWebSecurityManager getManager(UserRealm userRealm, RedisTemplate<String, Object> template) {
 		DefaultWebSecurityManager manager = new DefaultWebSecurityManager();
 		// 使用自定义Realm
-		manager.setRealm(accountRealm);
+		manager.setRealm(userRealm);
 		// 关闭Shiro自带的session
 		DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
 		DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
@@ -38,8 +41,15 @@ public class ShiroConfig {
 		subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
 		manager.setSubjectDAO(subjectDAO);
 		// 设置自定义Cache缓存
-		manager.setCacheManager(new CustomCacheManager());
+		manager.setCacheManager(new CustomCacheManager(template));
 		return manager;
+	}
+
+	/**
+	 * 生成一个ShiroRedisCacheManager
+	 **/
+	private CustomCacheManager cacheManager(RedisTemplate template) {
+		return new CustomCacheManager(template);
 	}
 
 	/**
@@ -63,12 +73,12 @@ public class ShiroConfig {
 
 	/**
 	 * <pre>
-	 * 注入bean，此处应注意： 
-	 * 
+	 * 注入bean，此处应注意：
+	 *
 	 * (1)代码顺序，应放置于shiroFilter后面，否则报错：
 	 * 	No SecurityManager accessible to the calling code, either bound to the org.apache.shiro.util.
-	 *	ThreadContext or as a vm static singleton. This is an invalid application configuration.
-	 * 
+	 * 	ThreadContext or as a vm static singleton. This is an invalid application configuration.
+	 *
 	 * (2)如不在此注册，在filter中将无法正常注入bean
 	 * </pre>
 	 */
@@ -101,5 +111,4 @@ public class ShiroConfig {
 		advisor.setSecurityManager(securityManager);
 		return advisor;
 	}
-
 }
