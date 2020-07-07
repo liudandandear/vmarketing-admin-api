@@ -18,5 +18,10 @@
     "name": "encryptAESKey",
     "type": "java.lang.String",
     "description": "A description for 'encryptAESKey'"
+  },
+  {
+    "name": "config.encrypt-jwt-key",
+    "type": "java.lang.String",
+    "description": "A description for 'config.encrypt-jwt-key'"
   }
 ]}

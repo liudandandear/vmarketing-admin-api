@@ -1,31 +1,30 @@
 package com.vmarketing.core.util;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.vmarketing.core.constant.JwtConstant;
-import com.vmarketing.core.exception.CustomException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
 /**
- * JAVA-JWT工具类
- * 
+ * JWT工具类
  */
 @Component
 public class JwtUtil {
+
 	/**
-	 * LOGGER
+	 * loggeer
 	 */
-	private static final Logger LOGGER = LoggerFactory.getLogger(JwtUtil.class);
+	private static final Logger loggeer = LoggerFactory.getLogger(JwtUtil.class);
 
 	/**
 	 * 过期时间改为从配置文件获取
@@ -37,23 +36,21 @@ public class JwtUtil {
 	 */
 	private static String encryptJWTKey;
 
-	@Value("${accessTokenExpireTime}")
+	@Value("${config.accessToken-expireTime}")
 	public void setAccessTokenExpireTime(String accessTokenExpireTime) {
 		JwtUtil.accessTokenExpireTime = accessTokenExpireTime;
 	}
 
-	@Value("${encryptJWTKey}")
+	@Value("${config.encrypt-jwtKey}")
 	public void setEncryptJWTKey(String encryptJWTKey) {
 		JwtUtil.encryptJWTKey = encryptJWTKey;
 	}
 
 	/**
 	 * 校验token是否正确
-	 * 
+	 *
 	 * @param token Token
 	 * @return boolean 是否正确
-	 * @author Wang926454
-	 * @date 2018/8/31 9:05
 	 */
 	public static boolean verify(String token) {
 		try {
@@ -64,19 +61,17 @@ public class JwtUtil {
 			DecodedJWT jwt = verifier.verify(token);
 			return true;
 		} catch (UnsupportedEncodingException e) {
-			LOGGER.error("JWTToken认证解密出现UnsupportedEncodingException异常:" + e.getMessage());
-			throw new CustomException("JWTToken认证解密出现UnsupportedEncodingException异常:" + e.getMessage());
+			loggeer.error("JWTToken认证解密出现UnsupportedEncodingException异常:" + e.getMessage());
+			e.printStackTrace();
 		}
+		return false;
 	}
 
 	/**
 	 * 获得Token中的信息无需secret解密也能获得
-	 * 
+	 *
 	 * @param token
 	 * @param claim
-	 * @return java.lang.String
-	 * @author Wang926454
-	 * @date 2018/9/7 16:54
 	 */
 	public static String getClaim(String token, String claim) {
 		try {
@@ -84,18 +79,17 @@ public class JwtUtil {
 			// 只能输出String类型，如果是其他类型返回null
 			return jwt.getClaim(claim).asString();
 		} catch (JWTDecodeException e) {
-			LOGGER.error("解密Token中的公共信息出现JWTDecodeException异常:" + e.getMessage());
-			throw new CustomException("解密Token中的公共信息出现JWTDecodeException异常:" + e.getMessage());
+			loggeer.error("解密Token中的公共信息出现JWTDecodeException异常:" + e.getMessage());
+			e.printStackTrace();
 		}
+		return null;
 	}
 
 	/**
 	 * 生成签名
-	 * 
+	 *
 	 * @param account 帐号
 	 * @return java.lang.String 返回加密的Token
-	 * @author Wang926454
-	 * @date 2018/8/31 9:07
 	 */
 	public static String sign(String account, String currentTimeMillis) {
 		try {
@@ -108,8 +102,9 @@ public class JwtUtil {
 			return JWT.create().withClaim("account", account).withClaim("currentTimeMillis", currentTimeMillis)
 					.withExpiresAt(date).sign(algorithm);
 		} catch (UnsupportedEncodingException e) {
-			LOGGER.error("JWTToken加密出现UnsupportedEncodingException异常:" + e.getMessage());
-			throw new CustomException("JWTToken加密出现UnsupportedEncodingException异常:" + e.getMessage());
+			loggeer.error("JWTToken加密出现UnsupportedEncodingException异常:" + e.getMessage());
+			e.printStackTrace();
 		}
+		return null;
 	}
 }

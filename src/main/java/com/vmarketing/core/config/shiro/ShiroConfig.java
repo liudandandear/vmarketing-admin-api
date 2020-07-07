@@ -12,15 +12,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import com.vmarketing.core.config.jwt.JwtFilter;
+import com.vmarketing.core.config.shiro.cache.CustomCacheManager;
+
 import javax.servlet.Filter;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Shiro配置 转载请注明出处，更多技术文章欢迎大家访问我的个人博客站点：https://www.doufuplus.com
- *
- * @author 丶doufu
- * @date 2019/08/03
+ * Shiro配置
+ * 
+ * 在此处配置 Shiro 的验证
  */
 @Configuration
 public class ShiroConfig {
@@ -44,19 +46,19 @@ public class ShiroConfig {
 		manager.setCacheManager(new CustomCacheManager(template));
 		return manager;
 	}
-
+	
 	/**
-	 * 生成一个ShiroRedisCacheManager
-	 **/
-	private CustomCacheManager cacheManager(RedisTemplate template) {
-		return new CustomCacheManager(template);
-	}
+     * 生成一个ShiroRedisCacheManager
+     **/
+    private CustomCacheManager cacheManager(RedisTemplate template) {
+        return new CustomCacheManager(template);
+    }
 
 	/**
 	 * 添加自己的过滤器，自定义url规则 详情见文档 http://shiro.apache.org/web.html#urls-
 	 */
 	@Bean("shiroFilter")
-	public ShiroFilterFactoryBean factory(DefaultWebSecurityManager securityManager) {
+	public ShiroFilterFactoryBean shiroFilter(DefaultWebSecurityManager securityManager) {
 		ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
 		// 添加自己的过滤器取名为jwt
 		Map<String, Filter> filterMap = new HashMap<>(16);
@@ -72,21 +74,21 @@ public class ShiroConfig {
 	}
 
 	/**
-	 * <pre>
-	 * 注入bean，此处应注意：
-	 *
-	 * (1)代码顺序，应放置于shiroFilter后面，否则报错：
-	 * 	No SecurityManager accessible to the calling code, either bound to the org.apache.shiro.util.
-	 * 	ThreadContext or as a vm static singleton. This is an invalid application configuration.
-	 *
-	 * (2)如不在此注册，在filter中将无法正常注入bean
-	 * </pre>
-	 */
-	@Bean("jwtFilter")
-	public JwtFilter jwtFilterBean() {
-		return new JwtFilter();
-	}
-
+     * <pre>
+     * 注入bean，此处应注意：
+     *
+     * (1)代码顺序，应放置于shiroFilter后面，否则报错：
+     * 	No SecurityManager accessible to the calling code, either bound to the org.apache.shiro.util.
+     * 	ThreadContext or as a vm static singleton. This is an invalid application configuration.
+     *
+     * (2)如不在此注册，在filter中将无法正常注入bean
+     * </pre>
+     */
+    @Bean("jwtFilter")
+    public JwtFilter jwtFilterBean() {
+        return new JwtFilter();
+    }
+	
 	/**
 	 * 下面的代码是添加注解支持
 	 */

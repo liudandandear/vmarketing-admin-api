@@ -29,6 +29,7 @@ import com.vmarketing.dto.account.LoginReq;
 import com.vmarketing.entity.SysUser;
 import com.vmarketing.service.impl.SysUserServiceImpl;
 
+import cn.hutool.crypto.SecureUtil;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -62,11 +63,17 @@ public class SysAccountController {
 	@PostMapping("/login")
 	public Result login(@Validated @RequestBody LoginReq loginDto, HttpServletResponse response) {
 		try {
-			String account = loginDto.getPhone();
+			String account = loginDto.getAccount();
 			String password = loginDto.getPassword();
 			// 清除可能存在的shiro权限信息缓存
 			if (redis.hasKey(RedisConstant.PREFIX_SHIRO_CACHE + account)) {
 				redis.del(RedisConstant.PREFIX_SHIRO_CACHE + account);
+			}
+			SysUser sysUser = sysUserService.getOne(new QueryWrapper<SysUser>().eq("account", loginDto.getAccount()));
+			Assert.notNull(sysUser, "用户不存在");
+
+			if (!sysUser.getPassword().equals(SecureUtil.md5(password + sysUser.getSalt()))) {
+				return new Result(ResultCode.PASSWORD_ERROR, "密码不正确");
 			}
 
 			// 设置RefreshToken，时间戳为当前时间戳，直接设置即可(不用先删后设，会覆盖已有的RefreshToken)

@@ -6,7 +6,7 @@ package com.vmarketing.core.constant;
  */
 public interface RedisConstant {
 
-	String BASE_KEY = "doufuplus_";
+	String BASE_KEY = "vmarketing_";
 
 	/**
 	 * redis过期时间，以秒为单位，一分钟

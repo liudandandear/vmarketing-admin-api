@@ -6,7 +6,6 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
-import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +18,19 @@ import com.vmarketing.core.constant.RedisConstant;
 import com.vmarketing.core.db.RedisClient;
 import com.vmarketing.core.util.JwtUtil;
 import com.vmarketing.entity.SysUser;
+import com.vmarketing.mapper.SysUserMapper;
 import com.vmarketing.service.impl.SysUserServiceImpl;
 
 /**
- * 自定义Realm
+ * 自定义Realm Realm 能做的工作有三个方面
+ * 
+ * ①身份验证：getAuthenticationInfo 方法，验证账户和密码，并返回相关信息
+ * 
+ * ②权限获取：getAuthorizationInfo 方法，获取指定身份的权限，并返回相关信息
+ * 
+ * ③令牌支持：supports 方法 ，判断该令牌（token）是否被支持
+ * 
+ * 令牌类型：HostAuthenticationToken【主机验证令牌】，UsernamePasswordToken【用户密码验证令牌】
  */
 @Service
 public class UserRealm extends AuthorizingRealm {
@@ -31,7 +39,7 @@ public class UserRealm extends AuthorizingRealm {
 	private RedisClient redis;
 
 	@Autowired
-	private SysUserServiceImpl sysUserService;
+	private SysUserMapper sysUserMapper;
 
 	/**
 	 * 大坑，必须重写此方法，不然Shiro会报错
@@ -41,28 +49,13 @@ public class UserRealm extends AuthorizingRealm {
 		return token instanceof JwtToken;
 	}
 
-	/**
-	 * 只有当需要检测用户权限的时候才会调用此方法，例如checkRole,checkPermission之类的
-	 */
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
-		/*
-		 * // 返回当前用户所拥有的角色、权限等信息，根据自身项目编码即可 String account =
-		 * JwtUtil.getClaim(principals.toString(), JwtConstant.ACCOUNT); // 查询用户角色
-		 * List<Role> roles = roleMapper.findByAccount(account); for (int i = 0, roleLen
-		 * = roles.size(); i < roleLen; i++) { Role role = roles.get(i); // 添加角色
-		 * simpleAuthorizationInfo.addRole(role.getName()); // 根据用户角色查询权限
-		 * List<Permission> permissions = permissionMapper.findByRoleId(role.getId());
-		 * for (int j = 0, perLen = permissions.size(); j < perLen; j++) { Permission
-		 * permission = permissions.get(j); // 添加权限
-		 * simpleAuthorizationInfo.addStringPermission(permission.getSn()); } }
-		 */
-		return simpleAuthorizationInfo;
+		return null;
 	}
 
 	/**
-	 * 默认使用此方法进行用户名正确与否验证，错误抛出异常即可。
+	 * 身份验证
 	 */
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
@@ -73,15 +66,18 @@ public class UserRealm extends AuthorizingRealm {
 
 		// 解密获得account，用于和数据库进行对比
 		String account = JwtUtil.getClaim(token, JwtConstant.ACCOUNT_KEY);
+
 		// 帐号为空
 		if (StringUtils.isBlank(account)) {
 			throw new AuthenticationException("token中帐号为空(The account in Token is empty.)");
 		}
+
 		// 查询用户是否存在
-		SysUser sysUser = sysUserService.getOne(new QueryWrapper<SysUser>().eq("phone", account));
+		SysUser sysUser = sysUserMapper.findByAccount(account);
 		if (sysUser == null) {
 			throw new AuthenticationException("该帐号不存在(The account does not exist.)");
 		}
+
 		// 开始认证，要AccessToken认证通过，且Redis中存在RefreshToken，且两个Token时间戳一致
 		if (JwtUtil.verify(token) && redis.hasKey(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + account)) {
 			// 获取RefreshToken的时间戳
@@ -91,6 +87,7 @@ public class UserRealm extends AuthorizingRealm {
 				return new SimpleAuthenticationInfo(token, token, "userRealm");
 			}
 		}
-		throw new AuthenticationException("token expired or incorrect.");
+		// 错误抛出异常即可
+		throw new AuthenticationException("令牌过期或不正确(token expired or incorrect.)");
 	}
 }

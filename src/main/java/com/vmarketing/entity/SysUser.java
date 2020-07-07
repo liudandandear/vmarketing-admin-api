@@ -33,9 +33,9 @@ public class SysUser implements Serializable {
 	private Integer id;
 
 	/**
-	 * 用户名
+	 * 手机号(账户)
 	 */
-	private String username;
+	private String account;
 
 	/**
 	 * 手机号

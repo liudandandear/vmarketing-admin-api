@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit;
  * @date 2019/08/03
  */
 public class CustomCache<K, V> implements Cache<K, V> {
-
 	// TODO redis @Autowired注入失败，因此改为下面采用传参形式
 	// @Autowired
 	// private RedisClient redis = new RedisClient();
