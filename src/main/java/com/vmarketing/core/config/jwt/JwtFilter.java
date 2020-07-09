@@ -33,7 +33,7 @@ import com.vmarketing.core.util.JwtUtil;
  */
 public class JwtFilter extends BasicHttpAuthenticationFilter {
 
-	@Value("${config.refreshTokenExpireTime}")
+	@Value("${config.refreshToken-expireTime}")
 	private String refreshTokenExpireTime;
 
 	@Autowired
