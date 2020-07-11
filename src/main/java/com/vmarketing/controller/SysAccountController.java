@@ -10,9 +10,9 @@ import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -23,6 +23,8 @@ import com.vmarketing.core.constant.ResultCode;
 import com.vmarketing.core.db.RedisClient;
 import com.vmarketing.core.util.JwtUtil;
 import com.vmarketing.dto.account.LoginReq;
+import com.vmarketing.dto.account.RegisterReq;
+import com.vmarketing.dto.account.SendCodeReq;
 import com.vmarketing.entity.SysUser;
 import com.vmarketing.service.SysUserService;
 
@@ -92,7 +94,7 @@ public class SysAccountController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping("/logout")
+	@GetMapping("/logout")
 	public Result logout(HttpServletRequest request) {
 		try {
 			String token = "";
@@ -125,5 +127,51 @@ public class SysAccountController {
 			e.printStackTrace();
 			return new Result(ResultCode.ERROR, e.getMessage());
 		}
+	}
+
+	/**
+	 * 注册
+	 * 
+	 * @param loginReq
+	 * @param response
+	 * @return
+	 */
+	@PostMapping("/register")
+	public Result register(@Validated @RequestBody RegisterReq registerReq, HttpServletResponse response) {
+		try {
+			String account = registerReq.getAccount();
+			String password = registerReq.getPassword();
+			Integer code = registerReq.getCode();
+			// 检查账号是否存在
+			SysUser sysUser = sysUserService.getOne(new QueryWrapper<SysUser>().eq("account", account));
+			if (sysUser != null) {
+				return new Result(ResultCode.ALREADY_EXIST, "账号已存在,请重新输入！");
+			}
+			// 检查验证码是否正确
+			Integer redis_code = (Integer) redis.get(sendCode.getRedis_key(account));
+			if (!redis_code.equals(code)) {
+				return new Result(ResultCode.PARAM_ERROR, "验证码不正确！");
+			}
+			// 检查密码是否规范
+
+			return new Result().OK();
+		} catch (Exception e) {
+			return new Result(ResultCode.ERROR, e.getMessage());
+		}
+	}
+
+	/**
+	 * 发送验证码
+	 * 
+	 * @param sendCodeReq
+	 * @return
+	 */
+	@GetMapping("/send_code")
+	public Result sendCode(@Validated @RequestBody SendCodeReq sendCodeReq) {
+		// TODO::请求验证码服务
+		// 写入redis
+		String account = sendCodeReq.getAccount();
+		sendCodeReq.setRedis_key(account, 1234);
+		return new Result().OK();
 	}
 }
