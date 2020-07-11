@@ -19,6 +19,7 @@ import com.vmarketing.core.db.RedisClient;
 import com.vmarketing.core.util.JwtUtil;
 import com.vmarketing.entity.SysUser;
 import com.vmarketing.mapper.SysUserMapper;
+import com.vmarketing.service.SysUserService;
 import com.vmarketing.service.impl.SysUserServiceImpl;
 
 /**
@@ -39,7 +40,7 @@ public class UserRealm extends AuthorizingRealm {
 	private RedisClient redis;
 
 	@Autowired
-	private SysUserMapper sysUserMapper;
+	private SysUserService sysUserService;
 
 	/**
 	 * 大坑，必须重写此方法，不然Shiro会报错
@@ -73,7 +74,7 @@ public class UserRealm extends AuthorizingRealm {
 		}
 
 		// 查询用户是否存在
-		SysUser sysUser = sysUserMapper.findByAccount(account);
+		SysUser sysUser = sysUserService.getOne(new QueryWrapper<SysUser>().eq("account", account));
 		if (sysUser == null) {
 			throw new AuthenticationException("该帐号不存在(The account does not exist.)");
 		}

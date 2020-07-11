@@ -1,12 +1,13 @@
 package com.vmarketing.core.config.shiro;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.vmarketing.core.config.jwt.JwtToken;
 import com.vmarketing.core.constant.JwtConstant;
 import com.vmarketing.core.constant.RedisConstant;
 import com.vmarketing.core.db.RedisClient;
 import com.vmarketing.core.util.JwtUtil;
 import com.vmarketing.entity.SysUser;
-import com.vmarketing.mapper.SysUserMapper;
+import com.vmarketing.service.SysUserService;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -30,7 +31,7 @@ public class AccountRealm extends AuthorizingRealm {
 	private RedisClient redis;
 
 	@Autowired
-	private SysUserMapper sysUserMapper;
+	private SysUserService sysUserService;
 
 	/**
 	 * 大坑，必须重写此方法，不然Shiro会报错
@@ -84,7 +85,8 @@ public class AccountRealm extends AuthorizingRealm {
 			throw new AuthenticationException("token中帐号为空(The account in Token is empty.)");
 		}
 		// 查询用户是否存在
-		SysUser sysUser = sysUserMapper.findByAccount(account);
+		
+		SysUser sysUser = sysUserService.getOne(new QueryWrapper<SysUser>().eq("account", account));
 		if (sysUser == null) {
 			throw new AuthenticationException("该帐号不存在(The account does not exist.)");
 		}

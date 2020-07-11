@@ -1,46 +1,24 @@
 package com.vmarketing.core.api;
 
-import com.alibaba.fastjson.JSONObject;
-import com.vmarketing.core.constant.ResultCode;
-
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serializable;
+import org.json.JSONObject;
 
 /**
- * Json封装
+ * @ Program : com.ljnt.blog.po.Result @ Description : 返回消息实体 @ Author : lj @
+ * CreateDate : 2020-2-12 22:19
  */
-public class Result implements Serializable {
-
-	private static final long serialVersionUID = 8178937610421199532L;
-
-	/**
-	 * 请求标识，默认为失败状态
-	 */
+public class Result {
 	private boolean success = false;
-
-	/**
-	 * 状态码，默认为失败状态
-	 */
-	private Integer code = ResultCode.ERROR;
-
-	/***
-	 * 操作信息
-	 */
-	private String msg;
-
-	/**
-	 * 返回数据
-	 */
-	private Object obj = new JSONObject();
+	private Integer code = null;
+	private String msg = null;
+	private Object res = new JSONObject();
 
 	/**
 	 * 成功响应
 	 */
 	public Result OK() {
 		this.success = true;
-		this.code = ResultCode.SUCCESS;
-		if (StringUtils.isBlank(this.msg)) {
+		this.code = 200;
+		if (this.msg == null) {
 			this.msg = "success.";
 		}
 		return this;
@@ -50,8 +28,8 @@ public class Result implements Serializable {
 	 * 请求成功，但业务逻辑处理不通过
 	 */
 	public Result NO() {
-		this.success = true;
-		this.code = ResultCode.ERROR;
+		this.success = false;
+		this.code = 400;
 		return this;
 	}
 
@@ -61,23 +39,23 @@ public class Result implements Serializable {
 
 	public Result(int code) {
 		super();
-		this.success = true;
+		this.success = false;
 		this.code = code;
 	}
 
 	public Result(int code, String msg) {
 		super();
-		this.success = true;
+		this.success = false;
 		this.code = code;
 		this.msg = msg;
 	}
 
-	public Result(int code, String msg, Object obj) {
+	public Result(int code, String msg, Object res) {
 		super();
 		this.success = true;
 		this.code = code;
 		this.msg = msg;
-		this.obj = obj;
+		this.res = res;
 	}
 
 	public boolean isSuccess() {
@@ -93,20 +71,7 @@ public class Result implements Serializable {
 	}
 
 	public void setCode(Integer code) {
-		this.success = true;
 		this.code = code;
-	}
-
-	public Object getObj() {
-		return obj;
-	}
-
-	public void setObj(Object obj) {
-		this.success = true;
-		if (obj == null) {
-			obj = new JSONObject();
-		}
-		this.obj = obj;
 	}
 
 	public String getMsg() {
@@ -117,8 +82,16 @@ public class Result implements Serializable {
 		this.msg = msg;
 	}
 
+	public Object getRes() {
+		return res;
+	}
+
+	public void setRes(Object res) {
+		this.res = res;
+	}
+
 	@Override
 	public String toString() {
-		return "ResultVo{" + "success=" + success + ", code=" + code + ", msg='" + msg + '\'' + ", obj=" + obj + '}';
+		return "Result{" + "success=" + success + ", code=" + code + ", msg='" + msg + '\'' + ", res=" + res + '}';
 	}
 }

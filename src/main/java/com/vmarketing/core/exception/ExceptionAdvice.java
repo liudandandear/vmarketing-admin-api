@@ -33,10 +33,7 @@ public class ExceptionAdvice {
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	@ExceptionHandler(ShiroException.class)
 	public Result handle401(ShiroException e) {
-		Result result = new Result();
-		result.setCode(ResultCode.UNLAWFUL);
-		result.setMsg("无权访问(Unauthorized):" + e.getMessage());
-		return result;
+		return new Result(ResultCode.UNLAWFUL, "无权访问(Unauthorized):" + e.getMessage());
 	}
 
 	/**
@@ -45,10 +42,7 @@ public class ExceptionAdvice {
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	@ExceptionHandler(UnauthorizedException.class)
 	public Result handle401(UnauthorizedException e) {
-		Result result = new Result();
-		result.setCode(ResultCode.UNLAWFUL);
-		result.setMsg("无权访问(Unauthorized):当前Subject没有此请求所需权限(" + e.getMessage() + ")");
-		return result;
+		return new Result(ResultCode.UNLAWFUL, "无权访问(Unauthorized):当前Subject没有此请求所需权限(" + e.getMessage() + ")");
 	}
 
 	/**
@@ -58,10 +52,8 @@ public class ExceptionAdvice {
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	@ExceptionHandler(UnauthenticatedException.class)
 	public Result handle401(UnauthenticatedException e) {
-		Result result = new Result();
-		result.setCode(ResultCode.UNLAWFUL);
-		result.setMsg("无权访问(Unauthorized):当前Subject是匿名Subject，请先登录(This subject is anonymous.)");
-		return result;
+		return new Result(ResultCode.UNLAWFUL,
+				"无权访问(Unauthorized):当前Subject是匿名Subject，请先登录(This subject is anonymous.)");
 	}
 
 	/**
@@ -70,13 +62,10 @@ public class ExceptionAdvice {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(BindException.class)
 	public Result validException(BindException e) {
-		Result result = new Result();
 		List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
 		Map<String, Object> results = this.getValidError(fieldErrors);
-		result.setCode(ResultCode.ERROR);
-		result.setMsg(results.get("errorMsg").toString());
-		result.setObj(results.get("errorList"));
-		return result;
+
+		return new Result(ResultCode.ERROR, results.get("errorMsg").toString(), results.get("errorList"));
 	}
 
 	/**
@@ -85,13 +74,9 @@ public class ExceptionAdvice {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public Result validException(MethodArgumentNotValidException e) {
-		Result result = new Result();
 		List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
 		Map<String, Object> results = this.getValidError(fieldErrors);
-		result.setCode(ResultCode.ERROR);
-		result.setMsg(results.get("errorMsg").toString());
-		result.setObj(results.get("errorList"));
-		return result;
+		return new Result(ResultCode.ERROR, results.get("errorMsg").toString(), results.get("errorList"));
 	}
 
 	/**
@@ -100,10 +85,7 @@ public class ExceptionAdvice {
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ExceptionHandler(NoHandlerFoundException.class)
 	public Result handle(NoHandlerFoundException e) {
-		Result result = new Result();
-		result.setCode(ResultCode.NOT_FOUND);
-		result.setMsg(e.getMessage());
-		return result;
+		return new Result(ResultCode.NOT_FOUND, e.getMessage());
 	}
 
 	/**
@@ -114,10 +96,7 @@ public class ExceptionAdvice {
 	public Result globalException(HttpServletRequest request, Throwable ex) {
 		// return new JsonVo(this.getStatus(request).value(), ex.toString() + ": " +
 		// ex.getMessage(), null);
-		Result result = new Result();
-		result.setCode(ResultCode.SERVER_ERROR);
-		result.setMsg(ex.toString() + ": " + ex.getMessage());
-		return result;
+		return new Result(ResultCode.SERVER_ERROR, ex.toString() + ": " + ex.getMessage());
 	}
 
 	/**
@@ -126,10 +105,7 @@ public class ExceptionAdvice {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(CustomException.class)
 	public Result handle(CustomException e) {
-		Result result = new Result();
-		result.NO();
-		result.setMsg(e.getMessage());
-		return result;
+		return new Result(ResultCode.SERVER_ERROR, e.getMessage());
 	}
 
 	/**

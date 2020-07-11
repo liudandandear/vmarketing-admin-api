@@ -6,18 +6,27 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.vmarketing.core.api.Result;
 import com.vmarketing.core.constant.JwtConstant;
 import com.vmarketing.core.constant.RedisConstant;
 import com.vmarketing.core.constant.ResultCode;
 import com.vmarketing.core.db.RedisClient;
 import com.vmarketing.core.util.JwtUtil;
+import com.vmarketing.dto.account.LoginReq;
+import com.vmarketing.entity.SysUser;
+import com.vmarketing.service.SysUserService;
+
+import cn.hutool.crypto.SecureUtil;
 
 /**
  * 
@@ -35,6 +44,9 @@ public class SysAccountController {
 	@Autowired
 	private RedisClient redis;
 
+	@Autowired
+	private SysUserService sysUserService;
+
 	/**
 	 * 登录
 	 * 
@@ -43,11 +55,15 @@ public class SysAccountController {
 	 * @return
 	 */
 	@PostMapping("/login")
-	public Result login(String account, String password, HttpServletResponse response) {
-
+	public Result login(@Validated @RequestBody LoginReq loginReq, HttpServletResponse response) {
 		try {
-			if (!("doufuplus".equals(account) && "123456".equals(password))) {
-				return new Result(ResultCode.PASSWORD_ERROR, "account or password error.");
+			String account = loginReq.getAccount();
+			String password = loginReq.getPassword();
+			SysUser sysUser = sysUserService.getOne(new QueryWrapper<SysUser>().eq("account", account));
+			Assert.notNull(sysUser, "账号有误，请重新输入！");
+			if (!sysUser.getAccount().equals(account)
+					|| !sysUser.getPassword().equals(SecureUtil.md5(password + sysUser.getSalt()))) {
+				return new Result(ResultCode.PASSWORD_ERROR, "用户名与密码不匹配！（account or password error.）");
 			}
 
 			// 清除可能存在的shiro权限信息缓存
@@ -64,7 +80,6 @@ public class SysAccountController {
 			String token = JwtUtil.sign(account, currentTimeMillis);
 			response.setHeader("Authorization", token);
 			response.setHeader("Access-Control-Expose-Headers", "Authorization");
-
 			return new Result().OK();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -90,9 +105,9 @@ public class SysAccountController {
 					token = value;
 				}
 			}
-			// 校验token
+			// 校验tok
 			if (StringUtils.isBlank(token)) {
-				return new Result(ResultCode.PARAM_ERROR);
+				return new Result(ResultCode.PARAM_ERROR, "token 不能为空");
 			}
 			String account = JwtUtil.getClaim(token, JwtConstant.ACCOUNT_KEY);
 			if (StringUtils.isBlank(account)) {
