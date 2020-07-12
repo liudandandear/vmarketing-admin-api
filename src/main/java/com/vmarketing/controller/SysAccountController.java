@@ -57,19 +57,23 @@ public class SysAccountController {
 	 * @return
 	 */
 	@PostMapping("/login")
-	public Result login(@Validated @RequestBody LoginReq loginReq, HttpServletResponse response) {
-		try {
+	public Result login(@Validated @RequestBody LoginReq loginReq, HttpServletResponse response)
+	{
+		try
+		{
 			String account = loginReq.getAccount();
 			String password = loginReq.getPassword();
 			SysUser sysUser = sysUserService.getOne(new QueryWrapper<SysUser>().eq("account", account));
 			Assert.notNull(sysUser, "账号有误，请重新输入！");
 			if (!sysUser.getAccount().equals(account)
-					|| !sysUser.getPassword().equals(SecureUtil.md5(password + sysUser.getSalt()))) {
+					|| !sysUser.getPassword().equals(SecureUtil.md5(password + sysUser.getSalt())))
+			{
 				return new Result(ResultCode.PASSWORD_ERROR, "用户名与密码不匹配！（account or password error.）");
 			}
 
 			// 清除可能存在的shiro权限信息缓存
-			if (redis.hasKey(RedisConstant.PREFIX_SHIRO_CACHE + account)) {
+			if (redis.hasKey(RedisConstant.PREFIX_SHIRO_CACHE + account))
+			{
 				redis.del(RedisConstant.PREFIX_SHIRO_CACHE + account);
 			}
 
@@ -83,7 +87,8 @@ public class SysAccountController {
 			response.setHeader("Authorization", token);
 			response.setHeader("Access-Control-Expose-Headers", "Authorization");
 			return new Result().OK();
-		} catch (Exception e) {
+		} catch (Exception e)
+		{
 			e.printStackTrace();
 			return new Result(ResultCode.ERROR, e.getMessage());
 		}
@@ -95,35 +100,43 @@ public class SysAccountController {
 	 * @return
 	 */
 	@GetMapping("/logout")
-	public Result logout(HttpServletRequest request) {
-		try {
+	public Result logout(HttpServletRequest request)
+	{
+		try
+		{
 			String token = "";
 			// 获取头部信息
 			Enumeration<String> headerNames = request.getHeaderNames();
-			while (headerNames.hasMoreElements()) {
+			while (headerNames.hasMoreElements())
+			{
 				String key = (String) headerNames.nextElement();
 				String value = request.getHeader(key);
-				if ("Authorization".equalsIgnoreCase(key)) {
+				if ("Authorization".equalsIgnoreCase(key))
+				{
 					token = value;
 				}
 			}
 			// 校验tok
-			if (StringUtils.isBlank(token)) {
+			if (StringUtils.isBlank(token))
+			{
 				return new Result(ResultCode.PARAM_ERROR, "token 不能为空");
 			}
 			String account = JwtUtil.getClaim(token, JwtConstant.ACCOUNT_KEY);
-			if (StringUtils.isBlank(account)) {
+			if (StringUtils.isBlank(account))
+			{
 				return new Result(ResultCode.NOT_LOGIN, "token失效或不正确.");
 			}
 			// 清除shiro权限信息缓存
-			if (redis.hasKey(RedisConstant.PREFIX_SHIRO_CACHE + account)) {
+			if (redis.hasKey(RedisConstant.PREFIX_SHIRO_CACHE + account))
+			{
 				redis.del(RedisConstant.PREFIX_SHIRO_CACHE + account);
 			}
 			// 清除RefreshToken
 			redis.del(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + account);
 
 			return new Result().OK();
-		} catch (Exception e) {
+		} catch (Exception e)
+		{
 			e.printStackTrace();
 			return new Result(ResultCode.ERROR, e.getMessage());
 		}
@@ -137,25 +150,30 @@ public class SysAccountController {
 	 * @return
 	 */
 	@PostMapping("/register")
-	public Result register(@Validated @RequestBody RegisterReq registerReq, HttpServletResponse response) {
-		try {
+	public Result register(@Validated @RequestBody RegisterReq registerReq, HttpServletResponse response)
+	{
+		try
+		{
 			String account = registerReq.getAccount();
 			String password = registerReq.getPassword();
 			Integer code = registerReq.getCode();
 			// 检查账号是否存在
 			SysUser sysUser = sysUserService.getOne(new QueryWrapper<SysUser>().eq("account", account));
-			if (sysUser != null) {
+			if (sysUser != null)
+			{
 				return new Result(ResultCode.ALREADY_EXIST, "账号已存在,请重新输入！");
 			}
 			// 检查验证码是否正确
-			Integer redis_code = (Integer) redis.get(sendCode.getRedis_key(account));
-			if (!redis_code.equals(code)) {
+			Integer redis_code = (Integer) redis.get(registerReq.getCodeKey(account));
+			if (!redis_code.equals(code))
+			{
 				return new Result(ResultCode.PARAM_ERROR, "验证码不正确！");
 			}
 			// 检查密码是否规范
 
 			return new Result().OK();
-		} catch (Exception e) {
+		} catch (Exception e)
+		{
 			return new Result(ResultCode.ERROR, e.getMessage());
 		}
 	}
@@ -167,11 +185,13 @@ public class SysAccountController {
 	 * @return
 	 */
 	@GetMapping("/send_code")
-	public Result sendCode(@Validated @RequestBody SendCodeReq sendCodeReq) {
+	public Result sendCode(@Validated @RequestBody SendCodeReq sendCodeReq)
+	{
 		// TODO::请求验证码服务
 		// 写入redis
-		String account = sendCodeReq.getAccount();
-		sendCodeReq.setRedis_key(account, 1234);
+//		String account = sendCodeReq.getAccount();
+//		Integer code=1234;
+		
 		return new Result().OK();
 	}
 }
