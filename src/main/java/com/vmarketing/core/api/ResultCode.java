@@ -1,22 +1,93 @@
 package com.vmarketing.core.api;
 
 /**
- * 响应码枚举，参考HTTP状态码的语义
+ * RESTFULL 状态码常量
+ * 
  */
-public enum ResultCode {
-	SUCCESS(200), // 成功
-	FAIL(400), // 失败
-	UNAUTHORIZED(401), // 未认证（签名错误）
-	NOT_FOUND(404), // 接口不存在
-	INTERNAL_SERVER_ERROR(500);// 服务器内部错误
+public interface ResultCode {
 
-	private final int code;
+	/**
+	 * 未登录
+	 */
+	int NOT_LOGIN = 10001;
 
-	ResultCode(int code) {
-		this.code = code;
-	}
+	/**
+	 * 请求成功
+	 */
+	int SUCCESS = 10200;
 
-	public int code() {
-		return code;
-	}
+	/**
+	 * 请求失败
+	 */
+	int ERROR = 10400;
+
+	/**
+	 * 非法请求
+	 */
+	int UNLAWFUL = 10401;
+
+	/**
+	 * 已存在
+	 */
+	int ALREADY_EXIST = 10403;
+
+	/**
+	 * 找不到
+	 */
+	int NOT_FOUND = 10404;
+
+	/**
+	 * 次数限制
+	 */
+	int TRIES_LIMIT = 10405;
+
+	/**
+	 * 分钟级流控
+	 */
+	int MINUTE_LIMIT = 10415;
+
+	/**
+	 * 小时级流控
+	 */
+	int HOUR_LIMIT = 10425;
+
+	/**
+	 * 天级流控
+	 */
+	int DAY_LIMIT = 10435;
+
+	/**
+	 * 服务错误
+	 */
+	int SERVER_ERROR = 10500;
+
+	/**
+	 * 参数错误
+	 */
+	int PARAM_ERROR = 10600;
+
+	/**
+	 * 验证码错误
+	 */
+	int CAPTCHA_ERROR = 10601;
+
+	/**
+	 * 密码错误
+	 */
+	int PASSWORD_ERROR = 10602;
+
+	/**
+	 * 失效/超时
+	 */
+	int DISABLED = 10604;
+
+	/**
+	 * 冻结中
+	 */
+	int FREEZING = 10605;
+
+	/**
+	 * 服务降级
+	 */
+	int HYSTRIX = 10900;
 }

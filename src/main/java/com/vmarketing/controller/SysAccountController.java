@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.vmarketing.core.api.Result;
 import com.vmarketing.core.constant.JwtConstant;
 import com.vmarketing.core.constant.RedisConstant;
-import com.vmarketing.core.constant.ResultCode;
+import com.vmarketing.core.api.ResultCode;
 import com.vmarketing.core.db.RedisClient;
 import com.vmarketing.core.util.JwtUtil;
 import com.vmarketing.dto.account.LoginReq;

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.vmarketing.core.api.Result;
-import com.vmarketing.core.constant.ResultCode;
+import com.vmarketing.core.api.ResultCode;
 
 /**
  * 异常控制处理器
