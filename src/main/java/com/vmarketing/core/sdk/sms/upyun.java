@@ -8,34 +8,58 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 
 public class upyun {
 
-	public void send() throws IOException {
-		URL url = new URL("https://sms-api.upyun.com/api/messages");
+    /**
+     * JWT认证加密私钥(Base64加密)
+     */
+    private static String token;
 
-		//设置 JSON 参数
-		JSONObject object = new JSONObject();
-		object.put("template_id", 1);
-		object.put("mobile", "135xxxxxxxx");
+    public String getToken() {
+        return upyun.token;
+    }
 
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		// 设置必要参数
-		conn.setConnectTimeout(10000);
-		conn.setUseCaches(false);
-		conn.setDoOutput(true);
-		conn.setRequestMethod("POST");
-		conn.setRequestProperty("Connection", "Keep-Alive");
-		conn.setRequestProperty("Authorization", "<YOUR_TOKEN>");
-		conn.setRequestProperty("Content-type", "application/json");
+    @Value("${config.upyun-sms-Token}")
+    public void setToken(String smsToken) {
+        upyun.token = smsToken;
+    }
 
-		// 创建链接
-		conn.connect();
-		OutputStream os = conn.getOutputStream();
-		os.write(object.toString().getBytes("UTF-8"));
+    /**
+     * 发送验证码
+     *
+     * @param mobile
+     * @throws IOException
+     */
+    public void send(int mobile) throws IOException {
+        int res[] = {};
+        URL url = new URL("https://sms-api.upyun.com/api/messages");
 
-		//Gets the status code from an HTTP response message
-		int code = conn.getResponseCode();
+        //设置 JSON 参数
+        JSONObject object = new JSONObject();
+        // 模板ID
+        object.put("template_id", 1);
+        // 手机号
+        object.put("mobile", mobile);
+
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        // 设置必要参数
+        conn.setConnectTimeout(10000);
+        conn.setUseCaches(false);
+        conn.setDoOutput(true);
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Connection", "Keep-Alive");
+        conn.setRequestProperty("Authorization", this.getToken());
+        conn.setRequestProperty("Content-type", "application/json");
+
+        // 创建链接
+        conn.connect();
+        OutputStream os = conn.getOutputStream();
+        os.write(object.toString().getBytes("UTF-8"));
+
+        //Gets the status code from an HTTP response message
+        int code = conn.getResponseCode();
 
 		InputStreamReader reader = new InputStreamReader(conn.getInputStream());
 		BufferedReader br = new BufferedReader(reader);
