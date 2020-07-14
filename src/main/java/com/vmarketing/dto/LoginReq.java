@@ -1,4 +1,4 @@
-package com.vmarketing.dto.account;
+package com.vmarketing.dto;
 
 import lombok.Data;
 

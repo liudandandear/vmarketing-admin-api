@@ -1,4 +1,4 @@
-package com.vmarketing.dto.account;
+package com.vmarketing.dto;
 
 import com.vmarketing.core.constant.CacheConstant;
 import lombok.Data;
@@ -41,16 +41,5 @@ public class RegisterReq implements Serializable {
      */
     public String getCodeKey(String account) {
         return (String) redis.get(CacheConstant.SYS_ACCOUNT_CODE + account);
-    }
-
-    /**
-     * 将 code 验证码写入到 redis
-     *
-     * @param account
-     * @param code
-     * @return
-     */
-    public boolean setRedis_key(String account, int code) {
-        return redis.set(CacheConstant.SYS_ACCOUNT_CODE + account + account, code);
     }
 }
