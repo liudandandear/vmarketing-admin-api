@@ -88,18 +88,18 @@ public class JwtUtil {
 	/**
 	 * 生成签名
 	 *
-	 * @param account 帐号
+	 * @param username 帐号
 	 * @return java.lang.String 返回加密的Token
 	 */
-	public static String sign(String account, String currentTimeMillis) {
+	public static String sign(String username, String currentTimeMillis) {
 		try {
 			// 帐号加JWT私钥加密
-			String secret = account + Base64Util.decodeThrowsException(encryptJWTKey);
+			String secret = username + Base64Util.decodeThrowsException(encryptJWTKey);
 			// 此处过期时间是以毫秒为单位，所以乘以1000
 			Date date = new Date(System.currentTimeMillis() + Long.parseLong(accessTokenExpireTime) * 1000);
 			Algorithm algorithm = Algorithm.HMAC256(secret);
-			// 附带account帐号信息
-			return JWT.create().withClaim("account", account).withClaim("currentTimeMillis", currentTimeMillis)
+			// 附带username帐号信息
+			return JWT.create().withClaim("username", username).withClaim("currentTimeMillis", currentTimeMillis)
 					.withExpiresAt(date).sign(algorithm);
 		} catch (UnsupportedEncodingException e) {
 			loggeer.error("JWTToken加密出现UnsupportedEncodingException异常:" + e.getMessage());

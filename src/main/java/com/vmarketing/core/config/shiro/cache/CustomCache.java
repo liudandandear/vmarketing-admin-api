@@ -35,7 +35,7 @@ public class CustomCache<K, V> implements Cache<K, V> {
 	}
 
 	/**
-	 * 缓存的key名称获取为shiro:cache:account
+	 * 缓存的key名称获取为shiro:cache:username
 	 *
 	 * @param key
 	 * @return java.lang.String

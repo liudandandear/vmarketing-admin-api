@@ -20,18 +20,18 @@ import com.vmarketing.service.SysUserService;
  * @since 2020-06-30
  */
 @RestController
-@RequestMapping("/sys-user")
+@RequestMapping("/user")
 public class SysUserController {
 
-	@Autowired
-	SysUserService sysUserService;
+    @Autowired
+    SysUserService sysUserService;
 
-	// 测试权限验证
-	@RequiresAuthentication
-	@GetMapping("test")
-	public Result test() {
-		SysUser sysUser = sysUserService.getById(1L);
-		return new Result(ResultCode.SUCCESS, "test", sysUser);
-	}
+    // 测试权限验证
+    @RequiresAuthentication
+    @GetMapping("info")
+    public Result test() {
+        SysUser sysUser = sysUserService.getById(1L);
+        return new Result(ResultCode.SUCCESS, "success", sysUser);
+    }
 
 }

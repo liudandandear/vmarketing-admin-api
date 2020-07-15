@@ -1,10 +1,14 @@
 package com.vmarketing.controller;
 
+import java.io.IOException;
 import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import cn.hutool.core.util.RandomUtil;
+import com.vmarketing.core.constant.CacheConstant;
+import com.vmarketing.core.sdk.sms.Upyun;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
@@ -57,27 +61,27 @@ public class SysAccountController {
     @PostMapping("/login")
     public Result login(@Validated @RequestBody LoginReq loginReq, HttpServletResponse response) {
         try {
-            String account = loginReq.getAccount();
+            String username = loginReq.getUsername();
             String password = loginReq.getPassword();
-            SysUser sysUser = sysUserService.getOne(new QueryWrapper<SysUser>().eq("account", account));
+            SysUser sysUser = sysUserService.getOne(new QueryWrapper<SysUser>().eq("username", username));
             Assert.notNull(sysUser, "账号有误，请重新输入！");
-            if (!sysUser.getAccount().equals(account)
+            if (!sysUser.getUsername().equals(username)
                     || !sysUser.getPassword().equals(SecureUtil.md5(password + sysUser.getSalt()))) {
-                return new Result(ResultCode.PASSWORD_ERROR, "用户名与密码不匹配！（account or password error.）");
+                return new Result(ResultCode.PASSWORD_ERROR, "用户名与密码不匹配！（username or password error.）");
             }
 
             // 清除可能存在的shiro权限信息缓存
-            if (redis.hasKey(RedisConstant.PREFIX_SHIRO_CACHE + account)) {
-                redis.del(RedisConstant.PREFIX_SHIRO_CACHE + account);
+            if (redis.hasKey(RedisConstant.PREFIX_SHIRO_CACHE + username)) {
+                redis.del(RedisConstant.PREFIX_SHIRO_CACHE + username);
             }
 
             // 设置RefreshToken，时间戳为当前时间戳，直接设置即可(不用先删后设，会覆盖已有的RefreshToken)
             String currentTimeMillis = String.valueOf(System.currentTimeMillis());
-            redis.set(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + account, currentTimeMillis,
+            redis.set(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username, currentTimeMillis,
                     Integer.parseInt(refreshTokenExpireTime));
 
             // 从Header中Authorization返回AccessToken，时间戳为当前时间戳
-            String token = JwtUtil.sign(account, currentTimeMillis);
+            String token = JwtUtil.sign(username, currentTimeMillis);
             response.setHeader("Authorization", token);
             response.setHeader("Access-Control-Expose-Headers", "Authorization");
             return new Result().OK();
@@ -109,16 +113,16 @@ public class SysAccountController {
             if (StringUtils.isBlank(token)) {
                 return new Result(ResultCode.PARAM_ERROR, "token 不能为空");
             }
-            String account = JwtUtil.getClaim(token, JwtConstant.ACCOUNT_KEY);
-            if (StringUtils.isBlank(account)) {
+            String username = JwtUtil.getClaim(token, JwtConstant.ACCOUNT_KEY);
+            if (StringUtils.isBlank(username)) {
                 return new Result(ResultCode.NOT_LOGIN, "token失效或不正确.");
             }
             // 清除shiro权限信息缓存
-            if (redis.hasKey(RedisConstant.PREFIX_SHIRO_CACHE + account)) {
-                redis.del(RedisConstant.PREFIX_SHIRO_CACHE + account);
+            if (redis.hasKey(RedisConstant.PREFIX_SHIRO_CACHE + username)) {
+                redis.del(RedisConstant.PREFIX_SHIRO_CACHE + username);
             }
             // 清除RefreshToken
-            redis.del(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + account);
+            redis.del(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username);
 
             return new Result().OK();
         } catch (Exception e) {
@@ -137,16 +141,16 @@ public class SysAccountController {
     @PostMapping("/register")
     public Result register(@Validated @RequestBody RegisterReq registerReq, HttpServletResponse response) {
         try {
-            String account = registerReq.getAccount();
+            String phone = registerReq.getPhone();
             String password = registerReq.getPassword();
             Integer code = registerReq.getCode();
             // 检查账号是否存在
-            SysUser sysUser = sysUserService.getOne(new QueryWrapper<SysUser>().eq("account", account));
+            SysUser sysUser = sysUserService.getOne(new QueryWrapper<SysUser>().eq("phone", phone));
             if (sysUser != null) {
                 return new Result(ResultCode.ALREADY_EXIST, "账号已存在,请重新输入！");
             }
             // 检查验证码是否正确
-            Integer redis_code = (Integer) redis.get(registerReq.getCodeKey(account));
+            Integer redis_code = (Integer) redis.get(registerReq.getCodeKey(phone));
             if (!redis_code.equals(code)) {
                 return new Result(ResultCode.PARAM_ERROR, "验证码不正确！");
             }
@@ -164,14 +168,24 @@ public class SysAccountController {
      * @param sendCodeReq
      * @return
      */
-    @GetMapping("/send_code")
-    public Result sendCode(@Validated @RequestBody SendCodeReq sendCodeReq) {
-        // TODO::请求验证码服务
+    @PostMapping("/send_code")
+    public Result sendCode(@Validated @RequestBody SendCodeReq sendCodeReq) throws IOException {
         // 写入redis
-        String account = sendCodeReq.getAccount();
-        Integer code = 1234;
-        sendCodeReq.setRedis_key(account, code);
-
-        return new Result().OK();
+        String phone = sendCodeReq.getPhone();
+        //6位随机数
+        String captcha = RandomUtil.randomNumbers(6);
+        //请求验证码服务
+        int overdue_minute = 2;
+        //短信参数：验证+过期时间
+        String vars = captcha + "|" + overdue_minute;
+        Upyun upyun = new Upyun();
+        Boolean status = upyun.send(phone, vars);
+        if (status) {
+            //存redis（过期时间）
+            redis.set(CacheConstant.SYS_PHONE_CODE + phone, captcha, overdue_minute * 60);
+            return new Result().OK();
+        } else {
+            return new Result(ResultCode.PARAM_ERROR, "验证码发送有误！");
+        }
     }
 }

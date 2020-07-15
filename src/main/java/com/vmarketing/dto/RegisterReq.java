@@ -24,8 +24,8 @@ public class RegisterReq implements Serializable {
      */
     private static final long serialVersionUID = 1L;
 
-    @NotBlank(message = "账号不能为空")
-    private String account;
+    @NotBlank(message = "手机号不能为空")
+    private String phone;
 
     @NotBlank(message = "验证码不能为空")
     private Integer code;
@@ -34,12 +34,12 @@ public class RegisterReq implements Serializable {
     private String password;
 
     /**
-     * 根据 account 获取存储code验证码的 key
+     * 根据 phone 获取存储code验证码的 key
      *
-     * @param account
+     * @param phone
      * @return
      */
-    public String getCodeKey(String account) {
-        return (String) redis.get(CacheConstant.SYS_ACCOUNT_CODE + account);
+    public String getCodeKey(String phone) {
+        return (String) redis.get(CacheConstant.SYS_PHONE_CODE + phone);
     }
 }

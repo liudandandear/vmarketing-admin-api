@@ -31,9 +31,9 @@ public class SysUser implements Serializable {
     private String username;
 
     /**
-     * 手机号(账户)
+     * 手机号
      */
-    private String account;
+    private String phone;
 
     /**
      * 电子邮件

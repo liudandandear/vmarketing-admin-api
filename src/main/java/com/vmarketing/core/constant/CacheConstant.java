@@ -7,6 +7,6 @@ public interface CacheConstant {
     /**
      * 用户验证码缓存
      */
-    public static final String SYS_ACCOUNT_CODE = "sys:cache:code:";
+    public static final String SYS_PHONE_CODE = "sys:cache:code:";
 
 }

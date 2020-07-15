@@ -16,7 +16,7 @@ public class Result {
      */
     public Result OK() {
         this.success = true;
-        this.code = 200;
+        this.code = ResultCode.SUCCESS;
         if (this.msg == null) {
             this.msg = "success.";
         }
@@ -28,7 +28,7 @@ public class Result {
      */
     public Result NO() {
         this.success = false;
-        this.code = 400;
+        this.code = ResultCode.ERROR;
         return this;
     }
 

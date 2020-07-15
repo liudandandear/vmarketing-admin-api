@@ -65,24 +65,24 @@ public class UserRealm extends AuthorizingRealm {
 			throw new AuthenticationException("token cannot be empty.");
 		}
 
-		// 解密获得account，用于和数据库进行对比
-		String account = JwtUtil.getClaim(token, JwtConstant.ACCOUNT_KEY);
+		// 解密获得username，用于和数据库进行对比
+		String username = JwtUtil.getClaim(token, JwtConstant.ACCOUNT_KEY);
 
 		// 帐号为空
-		if (StringUtils.isBlank(account)) {
-			throw new AuthenticationException("token中帐号为空(The account in Token is empty.)");
+		if (StringUtils.isBlank(username)) {
+			throw new AuthenticationException("token中用户名为空(The username in Token is empty.)");
 		}
 
 		// 查询用户是否存在
-		SysUser sysUser = sysUserService.getOne(new QueryWrapper<SysUser>().eq("account", account));
+		SysUser sysUser = sysUserService.getOne(new QueryWrapper<SysUser>().eq("username", username));
 		if (sysUser == null) {
-			throw new AuthenticationException("该帐号不存在(The account does not exist.)");
+			throw new AuthenticationException("该用户不存在(The username does not exist.)");
 		}
 
 		// 开始认证，要AccessToken认证通过，且Redis中存在RefreshToken，且两个Token时间戳一致
-		if (JwtUtil.verify(token) && redis.hasKey(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + account)) {
+		if (JwtUtil.verify(token) && redis.hasKey(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username)) {
 			// 获取RefreshToken的时间戳
-			String currentTimeMillisRedis = redis.get(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + account).toString();
+			String currentTimeMillisRedis = redis.get(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username).toString();
 			// 获取AccessToken时间戳，与RefreshToken的时间戳对比
 			if (JwtUtil.getClaim(token, JwtConstant.CURRENT_TIME_MILLIS).equals(currentTimeMillisRedis)) {
 				return new SimpleAuthenticationInfo(token, token, "userRealm");

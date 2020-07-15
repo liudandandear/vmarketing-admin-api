@@ -9,7 +9,7 @@ public interface JwtConstant {
 	/**
 	 * JWT-ACCOUNT_KEY:
 	 */
-	String ACCOUNT_KEY = "account";
+	String ACCOUNT_KEY = "username";
 
 	/**
 	 * JWT-currentTimeMillis:

@@ -132,11 +132,11 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 		// 拿到当前Header中Authorization的AccessToken(Shiro中getAuthzHeader方法已经实现)
 		String token = this.getAuthzHeader(request);
 		// 获取当前Token的帐号信息
-		String account = JwtUtil.getClaim(token, JwtConstant.ACCOUNT_KEY);
+		String username = JwtUtil.getClaim(token, JwtConstant.ACCOUNT_KEY);
 		// 判断Redis中RefreshToken是否存在
-		if (redis.hasKey(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + account)) {
+		if (redis.hasKey(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username)) {
 			// Redis中RefreshToken还存在，获取RefreshToken的时间戳
-			String currentTimeMillisRedis = redis.get(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + account).toString();
+			String currentTimeMillisRedis = redis.get(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username).toString();
 			// 获取当前AccessToken中的时间戳，与RefreshToken的时间戳对比，如果当前时间戳一致，进行AccessToken刷新
 			if (JwtUtil.getClaim(token, JwtConstant.CURRENT_TIME_MILLIS).equals(currentTimeMillisRedis)) {
 				// 获取当前最新时间戳
@@ -146,10 +146,10 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 				// String refreshTokenExpireTime =
 				// PropertiesUtil.getProperty("refreshTokenExpireTime");
 				// 设置RefreshToken中的时间戳为当前最新时间戳，且刷新过期时间重新为30分钟过期(配置文件可配置refreshTokenExpireTime属性)
-				redis.set(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + account, currentTimeMillis,
+				redis.set(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username, currentTimeMillis,
 						Integer.parseInt(refreshTokenExpireTime));
 				// 刷新AccessToken，设置时间戳为当前最新时间戳
-				token = JwtUtil.sign(account, currentTimeMillis);
+				token = JwtUtil.sign(username, currentTimeMillis);
 				// 将新刷新的AccessToken再次进行Shiro的登录
 				JwtToken jwtToken = new JwtToken(token);
 				// 提交给UserRealm进行认证，如果错误他会抛出异常并被捕获，如果没有抛出异常则代表登入成功，返回true
