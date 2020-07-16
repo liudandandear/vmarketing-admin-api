@@ -21,7 +21,7 @@ import com.vmarketing.service.SysUserService;
  * @since 2020-06-30
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/sys-user")
 public class SysUserController {
 
 	@Autowired
