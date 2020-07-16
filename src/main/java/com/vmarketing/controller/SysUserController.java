@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONObject;
 import com.vmarketing.core.api.Result;
 import com.vmarketing.core.api.ResultCode;
 import com.vmarketing.entity.SysUser;
@@ -23,15 +24,21 @@ import com.vmarketing.service.SysUserService;
 @RequestMapping("/user")
 public class SysUserController {
 
-    @Autowired
-    SysUserService sysUserService;
+	@Autowired
+	SysUserService sysUserService;
 
-    // 测试权限验证
-    @RequiresAuthentication
-    @GetMapping("info")
-    public Result test() {
-        SysUser sysUser = sysUserService.getById(1L);
-        return new Result(ResultCode.SUCCESS, "success", sysUser);
-    }
+	// 测试权限验证
+	@RequiresAuthentication
+	@GetMapping("info")
+	public Result info()
+	{
+		SysUser sysUser = sysUserService.getById(1L);
+		JSONObject json = new JSONObject();
+		// 用户信息
+		json.put("userinfo", sysUser);
+		// 用户角色
+		json.put("roles", "");
+		return new Result(ResultCode.SUCCESS, "success", json);
+	}
 
 }
