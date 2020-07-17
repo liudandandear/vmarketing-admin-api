@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Set;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,7 +14,7 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- *
+ * 用户表 用户实体类
  * </p>
  *
  * @author liudandan
@@ -104,31 +106,8 @@ public class SysUser implements Serializable {
 	private Integer lastLogin;
 
 	/**
-	 * 角色
+	 * 用户对应的角色集合
 	 */
-	@TableField(exist = false)
-	private static Object roles;
-
-	public static Object getRoles() {
-		return roles;
-	}
-
-	public void setRoles(Object roles) {
-		SysUser.roles = roles;
-	}
-
-	/**
-	 * 权限
-	 */
-	@TableField(exist = false)
-	private static Object permissions;
-
-	public static Object getPermissions() {
-		return permissions;
-	}
-
-	public static void setPermissions(Object permissions) {
-		SysUser.permissions = permissions;
-	}
+	private Set<SysRole> roles;
 
 }

@@ -1,6 +1,7 @@
 package com.vmarketing.service;
 
 import com.vmarketing.entity.SysRole;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -12,5 +13,4 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2020-07-16
  */
 public interface SysRoleService extends IService<SysRole> {
-
 }

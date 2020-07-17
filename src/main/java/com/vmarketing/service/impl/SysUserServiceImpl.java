@@ -17,4 +17,22 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
+
+	@Override
+	public SysUser getUserByName(String username) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SysUser getUserByPhone(String phone) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SysUser getUserByEmail(String email) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

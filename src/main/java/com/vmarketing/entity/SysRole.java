@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 角色表
+ * 角色表 角色类
  * </p>
  *
  * @author liudandan
@@ -21,48 +21,47 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class SysRole implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键id
-     */
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+	/**
+	 * 主键id
+	 */
+	@TableId(value = "id", type = IdType.AUTO)
+	private Integer id;
 
-    /**
-     * 角色名称
-     */
-    private String roleName;
+	/**
+	 * 角色名称
+	 */
+	private String roleName;
 
-    /**
-     * 角色代码
-     */
-    private String roleCode;
+	/**
+	 * 角色代码
+	 */
+	private String roleCode;
 
-    /**
-     * 描述
-     */
-    private String description;
+	/**
+	 * 描述
+	 */
+	private String description;
 
-    /**
-     * 创建人
-     */
-    private String createBy;
+	/**
+	 * 创建人
+	 */
+	private String createBy;
 
-    /**
-     * 创建时间
-     */
-    private Integer createTime;
+	/**
+	 * 创建时间
+	 */
+	private Integer createTime;
 
-    /**
-     * 更新人
-     */
-    private String updateBy;
+	/**
+	 * 更新人
+	 */
+	private String updateBy;
 
-    /**
-     * 更新时间
-     */
-    private Integer updateTime;
-
+	/**
+	 * 更新时间
+	 */
+	private Integer updateTime;
 
 }
