@@ -62,7 +62,7 @@ public class UserRealm extends AuthorizingRealm {
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
 		String token = (String) auth.getCredentials();
 		if (StringUtils.isBlank(token)) {
-			throw new AuthenticationException("token cannot be empty.");
+			throw new AuthenticationException("token 不能为空（token cannot be empty.）");
 		}
 
 		// 解密获得username，用于和数据库进行对比

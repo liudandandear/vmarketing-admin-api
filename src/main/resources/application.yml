@@ -79,8 +79,10 @@ config:
   encrypt-jwtKey: U0JBUElOENhspJrzkyNjQ1NA
   # AccessToken过期时间(秒)
   accessToken-expireTime: 600
-  # RefreshToken过期时间(秒)
-  refreshToken-expireTime: 604800
+  # 登录凭证Token过期时间(秒)
+  refreshToken-expireTime: 600
+  # shiroCache过期时间(秒)
+  shiroCacheExpireTime: 600
 
   # 又拍云授权账号ID
   upyun-sms-ID: 5129

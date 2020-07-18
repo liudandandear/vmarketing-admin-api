@@ -24,7 +24,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 public class SysUser implements Serializable {
-
+	
 	private static final long serialVersionUID = 1L;
 
 	@TableId(value = "id", type = IdType.AUTO)
@@ -104,10 +104,4 @@ public class SysUser implements Serializable {
 	 * 最后登录时间
 	 */
 	private Integer lastLogin;
-
-	/**
-	 * 用户对应的角色集合
-	 */
-	private Set<SysRole> roles;
-
 }

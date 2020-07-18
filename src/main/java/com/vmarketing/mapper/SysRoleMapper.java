@@ -1,6 +1,9 @@
 package com.vmarketing.mapper;
 
 import com.vmarketing.entity.SysRole;
+
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -12,5 +15,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2020-07-16
  */
 public interface SysRoleMapper extends BaseMapper<SysRole> {
-
+	List<SysRole> selectByUserId(Integer userId);
 }

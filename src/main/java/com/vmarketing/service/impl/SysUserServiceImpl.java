@@ -1,10 +1,14 @@
 package com.vmarketing.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.vmarketing.entity.SysUser;
 import com.vmarketing.mapper.SysUserMapper;
 import com.vmarketing.service.SysUserService;
 
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,10 +22,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
+	@Autowired
+	private SysUserMapper sysUserMapper;
+
+	// 根据用户名查询用户信息
 	@Override
 	public SysUser getUserByName(String username) {
-		// TODO Auto-generated method stub
-		return null;
+		QueryWrapper<SysUser> queryWrapper = new QueryWrapper<SysUser>();
+		queryWrapper.eq("username", username).select(SysUser.class,
+				info -> !info.getColumn().equals("password") && info.getColumn().equals("salt")
+						&& !info.getColumn().equals("third_id") && !info.getColumn().equals("third_type"));
+		SysUser sysUser = sysUserMapper.selectOne(queryWrapper);
+		return sysUser;
 	}
 
 	@Override

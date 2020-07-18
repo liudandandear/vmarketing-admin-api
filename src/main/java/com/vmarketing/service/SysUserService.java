@@ -33,4 +33,6 @@ public interface SysUserService extends IService<SysUser> {
 	 * @return
 	 */
 	SysUser getUserByEmail(String email);
+	
+	
 }

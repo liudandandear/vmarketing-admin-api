@@ -2,6 +2,7 @@ package com.vmarketing.core.config.shiro.cache;
 
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import com.vmarketing.core.constant.JwtConstant;
@@ -13,18 +14,17 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 重写Shiro的Cache保存读取 转载请注明出处，更多技术文章欢迎大家访问我的个人博客站点：https://www.doufuplus.com
+ * 重写Shiro的Cache保存读取
  *
- * @author 丶doufu
- * @date 2019/08/03
  */
 public class CustomCache<K, V> implements Cache<K, V> {
 	// TODO redis @Autowired注入失败，因此改为下面采用传参形式
 	// @Autowired
 	// private RedisClient redis = new RedisClient();
 
-	// TODO @Value注入失败 @Value("${config.shiro-cache-expireTime}")
-	private String shiroCacheExpireTime = "600";
+	// shiro缓存有效期
+	@Value("${config.shiroCacheExpireTime}")
+	private String shiroCacheExpireTime;
 
 	private RedisTemplate<String, Object> redisTemplate;
 
