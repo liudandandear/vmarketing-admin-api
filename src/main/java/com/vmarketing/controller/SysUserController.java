@@ -50,7 +50,7 @@ public class SysUserController {
 		result.put("username", sysUser.getUsername());
 		result.put("phone", sysUser.getPhone());
 		result.put("email", sysUser.getEmail());
-		result.put("avatar", sysUser.getEmail());
+		result.put("avatar", sysUser.getAvatar());
 		result.put("enable", sysUser.getEnable());
 		result.put("status", sysUser.getStatus());
 		result.put("roles", sysUser.getStatus());

@@ -143,11 +143,11 @@
         </dependency>
 
         <!--UPYUN Java SDK-->
-        <dependency>
-            <groupId>com.upyun</groupId>
-            <artifactId>java-sdk</artifactId>
-            <version>4.2.0</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.upyun</groupId>-->
+<!--            <artifactId>java-sdk</artifactId>-->
+<!--            <version>4.2.0</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
