@@ -29,9 +29,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	@Override
 	public SysUser getUserByName(String username) {
 		QueryWrapper<SysUser> queryWrapper = new QueryWrapper<SysUser>();
-		queryWrapper.eq("username", username).select(SysUser.class,
-				info -> !info.getColumn().equals("password") && info.getColumn().equals("salt")
-						&& !info.getColumn().equals("third_id") && !info.getColumn().equals("third_type"));
+		queryWrapper.eq("username", username);
 		SysUser sysUser = sysUserMapper.selectOne(queryWrapper);
 		return sysUser;
 	}
